@@ -44,7 +44,7 @@
         <!-- Formulario de Presupuesto -->
         <section class="form-section">
             <div class="container">
-                <form id="presupuesto-form" class="presupuesto-form" novalidate>
+                <form id="presupuesto-form" class="presupuesto-form" novalidate enctype="multipart/form-data">
                     
                     <!-- Parte 1: Datos de Contacto -->
                     <fieldset class="form-fieldset">
@@ -148,7 +148,7 @@
                                         <span class="product-name">Lámpara de Pared</span>
                                         <span class="product-price">50€ + 10€ soporte</span>
                                         <span class="product-description">Elegantes apliques de pared</span>
-                                        <span class="product-discount">15% desc. en la 2ª unidad</span>
+                                        <span class="product-discount">20% desc. en la 2ª unidad</span>
                                     </label>
                                 </div>
                                 
@@ -170,12 +170,12 @@
                             <div class="form-group">
                                 <label for="cantidad-pared" class="form-label">Cantidad de lámparas</label>
                                 <select id="cantidad-pared" name="cantidad-pared" class="form-input">
-                                    <option value="1">1 lámpara - 65€</option>
-                                    <option value="2">2 lámparas - 120€ (15% desc. en la 2ª)</option>
+                                    <option value="1">1 lámpara - 50€</option>
+                                    <option value="2">2 lámparas - 90€ (20% desc. en la 2ª)</option>
                                 </select>
                                 <small class="form-help">
                                     <span class="discount-highlight">🔥 Oferta especial:</span> 
-                                    15% de descuento en la segunda lámpara de pared
+                                    20% de descuento en la segunda lámpara de pared
                                 </small>
                             </div>
                         </div>
@@ -206,6 +206,16 @@
                             </div>
                         </div>
                         
+                        <!-- Plazo de Entrega -->
+                        
+                        <!-- Fotos por litofanía (obligatorio) -->
+                        <div class="form-section-group" id="section-fotos">
+                            <h3 class="form-subtitle">Fotos por litofanía</h3>
+                            <p class="form-help">Formatos permitidos: JPG, JPEG, PNG, WEBP. Máx 10MB por imagen.</p>
+                            <div id="fotos-container" class="fotos-container"></div>
+                            <p id="fotos-error" class="form-error" role="alert" hidden></p>
+                        </div>
+
                         <!-- Plazo de Entrega -->
                         <div class="form-section-group">
                             <h3 class="form-subtitle">Plazo de Entrega</h3>

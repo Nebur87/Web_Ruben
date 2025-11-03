@@ -22,13 +22,13 @@ let presupuestoData = {
 const PRODUCTOS = {
     mesa: { precio: 45, nombre: 'Lámpara de Mesa', basePrice: 45 },
     pared: { 
-        precio: 65, 
+        precio: 50, 
         nombre: 'Lámpara de Pared',
-        basePrice: 65,
-        descuentoSegunda: 0.15,
+        basePrice: 50,
+        descuentoSegunda: 0.20,
         precios: {
-            1: 65,
-            2: 120  // 65 + (65 * 0.85) = 65 + 55.25 = 120.25 ≈ 120
+            1: 50,
+            2: 90  // 50 + (50 * 0.80) = 50 + 40 = 90
         }
     },
     techo: { 
@@ -43,14 +43,9 @@ const PRODUCTOS = {
             5: 300  // (5 * 50) + 50 = 300
         }
     },
-    personalizada: { precio: 80, nombre: 'Diseño Personalizado', basePrice: 80 }
 };
 
 const EXTRAS = {
-    'led-color': { precio: 15, nombre: 'LED de Color Variable' },
-    'dimmer': { precio: 10, nombre: 'Regulador de Intensidad' },
-    'marco': { precio: 25, nombre: 'Marco Premium' },
-    'grabado': { precio: 12, nombre: 'Grabado Personalizado' },
     'envio': { precio: 8, nombre: 'Envío Express' },
     'embalaje': { precio: 5, nombre: 'Embalaje de Regalo' }
 };
@@ -71,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initExtrasSelection();
     initPlazoCalculation();
     initPresupuestoDisplay();
+    initFotosUpload();
     initFormSubmission();
     
     // Calcular presupuesto inicial
@@ -97,6 +93,196 @@ function initNavigation() {
             });
         });
     }
+}
+
+// =============== FOTOS POR LITOFANÍA (obligatorias) ===============
+function initFotosUpload() {
+    const form = document.getElementById('presupuesto-form');
+    const fotosContainer = document.getElementById('fotos-container');
+    const fotosError = document.getElementById('fotos-error');
+
+    if (!form || !fotosContainer) return;
+
+    const prodRadios = document.querySelectorAll('input[name="producto"]');
+    const selPared = document.getElementById('cantidad-pared');
+    const selTecho = document.getElementById('cantidad-litofanias');
+
+    function getProducto() {
+        const r = document.querySelector('input[name="producto"]:checked');
+        return r ? r.value : '';
+    }
+
+    function getLitofaniasCount() {
+        const prod = getProducto();
+        if (prod === 'techo') {
+            return Math.min(5, Math.max(2, parseInt(selTecho?.value || '2')));
+        }
+        if (prod === 'pared') {
+            return Math.max(1, Math.min(2, parseInt(selPared?.value || '1')));
+        }
+        if (prod === 'mesa' || prod === 'personalizada') {
+            return 1;
+        }
+        return 0;
+    }
+
+    function validateFile(file) {
+        const ACCEPTED_MIME = ['image/jpeg', 'image/png', 'image/webp'];
+        const MAX_BYTES = 10 * 1024 * 1024; // 10MB
+        if (!file) return 'Falta una foto.';
+        if (!ACCEPTED_MIME.includes(file.type)) return 'Formato no permitido. Usa JPG, JPEG, PNG o WEBP.';
+        if (file.size > MAX_BYTES) return 'La imagen supera los 10MB.';
+        return '';
+    }
+
+    function validateAndPreview(input, previewEl) {
+        const file = input.files?.[0];
+        const err = validateFile(file);
+        if (err) {
+            input.classList.add('is-invalid');
+            if (previewEl) previewEl.hidden = true;
+            if (fotosError) {
+                fotosError.textContent = err;
+                fotosError.hidden = false;
+            }
+            return false;
+        }
+        input.classList.remove('is-invalid');
+        if (previewEl && file) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                previewEl.src = e.target.result;
+                previewEl.hidden = false;
+            };
+            reader.readAsDataURL(file);
+        }
+        return true;
+    }
+
+    function fileInput(name, idx) {
+        const wrap = document.createElement('div');
+        wrap.className = 'uploader-item';
+
+        const label = document.createElement('label');
+        label.textContent = `Foto ${idx}`;
+        label.htmlFor = `${name}-${idx}`;
+
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.id = `${name}-${idx}`;
+        input.name = 'fotos[]';
+        input.accept = '.jpg,.jpeg,.png,.webp';
+        input.required = true;
+
+        const preview = document.createElement('img');
+        preview.className = 'preview';
+        preview.alt = `Vista previa foto ${idx}`;
+        preview.hidden = true;
+
+        input.addEventListener('change', () => validateAndPreview(input, preview));
+
+        wrap.append(label, input, preview);
+        return wrap;
+    }
+
+    function litofaniaCard(index) {
+        const card = document.createElement('div');
+        card.className = 'foto-card';
+
+        const header = document.createElement('div');
+        header.className = 'foto-card-header';
+        header.innerHTML = `<strong>Litofanía ${index + 1}</strong>`;
+
+        const row = document.createElement('div');
+        row.className = 'foto-card-row';
+
+        const label = document.createElement('label');
+        label.className = 'form-label';
+        label.textContent = 'Orientación:';
+        label.htmlFor = `orient-${index}`;
+
+        const select = document.createElement('select');
+        select.id = `orient-${index}`;
+        select.name = `orientacion[${index}]`;
+        select.className = 'form-input';
+        select.innerHTML = `
+          <option value="horizontal" selected>Horizontal (2 fotos)</option>
+          <option value="vertical">Vertical (3 fotos)</option>
+        `;
+
+        const grid = document.createElement('div');
+        grid.className = 'uploader-grid';
+        grid.dataset.for = String(index);
+
+        function renderFiles() {
+            grid.innerHTML = '';
+            const required = select.value === 'vertical' ? 3 : 2;
+            for (let i = 1; i <= required; i++) {
+                grid.appendChild(fileInput(`lf${index}`, i));
+            }
+        }
+
+        select.addEventListener('change', renderFiles);
+        renderFiles();
+
+        row.append(label, select);
+        card.append(header, row, grid);
+        return card;
+    }
+
+    function buildFotosUI() {
+        fotosContainer.innerHTML = '';
+        if (fotosError) {
+            fotosError.hidden = true;
+            fotosError.textContent = '';
+        }
+
+        const n = getLitofaniasCount();
+        if (n <= 0) {
+            const p = document.createElement('p');
+            p.className = 'form-help';
+            p.textContent = 'Selecciona un producto para ver los requisitos de fotos.';
+            fotosContainer.appendChild(p);
+            return;
+        }
+        for (let i = 0; i < n; i++) {
+            fotosContainer.appendChild(litofaniaCard(i));
+        }
+    }
+
+    // Publicar validador para usarlo en validateCompleteForm
+    window.__validateFotos = function(show = true) {
+        const inputs = fotosContainer ? [...fotosContainer.querySelectorAll('input[type="file"]')] : [];
+        let ok = true;
+        let msgs = [];
+        let first = null;
+
+        inputs.forEach((inp, idx) => {
+            const f = inp.files?.[0];
+            const err = validateFile(f);
+            inp.classList.toggle('is-invalid', !!err);
+            if (err) {
+                ok = false;
+                if (!first) first = inp;
+                msgs.push(`Foto ${idx + 1}: ${err}`);
+            }
+        });
+
+        if (show && fotosError) {
+            fotosError.textContent = ok ? '' : msgs.join(' ');
+            fotosError.hidden = ok;
+        }
+        if (!ok && first) first.focus();
+        return ok;
+    }
+
+    // listeners que cambian nº de litofanías
+    prodRadios.forEach(r => r.addEventListener('change', buildFotosUI));
+    selPared?.addEventListener('change', buildFotosUI);
+    selTecho?.addEventListener('change', buildFotosUI);
+
+    // Inicializar
+    buildFotosUI();
 }
 
 // =============== VALIDACIÓN DE FORMULARIO ===============
@@ -512,6 +698,15 @@ function validateCompleteForm() {
         isValid = false;
         errors.push('Debe aceptar las condiciones');
         showFieldError('condiciones', 'Debe aceptar las condiciones de privacidad');
+    }
+    
+    // Validar fotos requeridas
+    if (typeof window.__validateFotos === 'function') {
+        const okFotos = window.__validateFotos(true);
+        if (!okFotos) {
+            isValid = false;
+            errors.push('Debes subir las fotos requeridas con formato válido');
+        }
     }
     
     if (!isValid) {
