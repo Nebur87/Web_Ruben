@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Solicita tu presupuesto personalizado para litofanías. Calcula el precio en tiempo real según tus preferencias.">
+    <title>Presupuesto - LitoArte | Litofanías Personalizadas</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico">
+</head>
+<body>
+    <!-- Header con navegación fija -->
+    <header class="header-fixed">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <img src="../assets/img/logo.png" alt="LitoArte Logo" class="logo">
+                <span class="brand-name">LitoArte</span>
+            </div>
+            
+            <button class="nav-toggle" aria-label="Abrir menú de navegación">
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+            </button>
+            
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html" class="nav-link">Inicio</a></li>
+                <li class="nav-item"><a href="galeria.html" class="nav-link">Galería</a></li>
+                <li class="nav-item"><a href="presupuesto.html" class="nav-link active">Presupuesto</a></li>
+                <li class="nav-item"><a href="contacto.html" class="nav-link">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <!-- Hero de Presupuesto -->
+        <section class="page-hero">
+            <div class="container">
+                <h1 class="page-title">Solicita tu Presupuesto</h1>
+                <p class="page-subtitle">Calcula el precio de tu litofanía personalizada en tiempo real. Completa el formulario y obtén tu presupuesto instantáneo.</p>
+            </div>
+        </section>
+
+        <!-- Formulario de Presupuesto -->
+        <section class="form-section">
+            <div class="container">
+                <form id="presupuesto-form" class="presupuesto-form" novalidate>
+                    
+                    <!-- Parte 1: Datos de Contacto -->
+                    <fieldset class="form-fieldset">
+                        <legend class="fieldset-title">
+                            <span class="step-number">1</span>
+                            Datos de Contacto
+                        </legend>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="nombre" class="form-label">Nombre *</label>
+                                <input 
+                                    type="text" 
+                                    id="nombre" 
+                                    name="nombre" 
+                                    class="form-input" 
+                                    maxlength="15" 
+                                    required 
+                                    pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ\s]+"
+                                    autocomplete="given-name"
+                                >
+                                <span class="form-error" id="nombre-error"></span>
+                                <small class="form-help">Solo letras, máximo 15 caracteres</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="apellidos" class="form-label">Apellidos *</label>
+                                <input 
+                                    type="text" 
+                                    id="apellidos" 
+                                    name="apellidos" 
+                                    class="form-input" 
+                                    maxlength="40" 
+                                    required 
+                                    pattern="[A-Za-zÁáÉéÍíÓóÚúÜüÑñ\s]+"
+                                    autocomplete="family-name"
+                                >
+                                <span class="form-error" id="apellidos-error"></span>
+                                <small class="form-help">Solo letras, máximo 40 caracteres</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="telefono" class="form-label">Teléfono de Contacto *</label>
+                                <input 
+                                    type="tel" 
+                                    id="telefono" 
+                                    name="telefono" 
+                                    class="form-input" 
+                                    maxlength="9" 
+                                    required 
+                                    pattern="[0-9]{9}"
+                                    autocomplete="tel"
+                                    placeholder="123456789"
+                                >
+                                <span class="form-error" id="telefono-error"></span>
+                                <small class="form-help">Solo números, exactamente 9 dígitos</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email" class="form-label">Correo Electrónico *</label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    class="form-input" 
+                                    required 
+                                    autocomplete="email"
+                                    placeholder="ejemplo@correo.com"
+                                >
+                                <span class="form-error" id="email-error"></span>
+                                <small class="form-help">Formato: usuario@dominio.com</small>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Parte 2: Presupuesto -->
+                    <fieldset class="form-fieldset">
+                        <legend class="fieldset-title">
+                            <span class="step-number">2</span>
+                            Configuración del Producto
+                        </legend>
+                        
+                        <!-- Selección de Producto -->
+                        <div class="form-section-group">
+                            <h3 class="form-subtitle">Tipo de Producto</h3>
+                            <div class="product-options">
+                                <div class="product-option">
+                                    <input type="radio" id="producto-mesa" name="producto" value="mesa" data-price="45" required>
+                                    <label for="producto-mesa" class="product-label">
+                                        <img src="../assets/img/productos/mesa-icon.svg" alt="Lámpara de Mesa">
+                                        <span class="product-name">Lámpara de Mesa</span>
+                                        <span class="product-price">45€</span>
+                                        <span class="product-description">Perfecta para escritorios y mesitas</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="product-option">
+                                    <input type="radio" id="producto-pared" name="producto" value="pared" data-price="65" required>
+                                    <label for="producto-pared" class="product-label">
+                                        <img src="../assets/img/productos/pared-icon.svg" alt="Lámpara de Pared">
+                                        <span class="product-name">Lámpara de Pared</span>
+                                        <span class="product-price">65€</span>
+                                        <span class="product-description">Elegantes apliques de pared</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="product-option">
+                                    <input type="radio" id="producto-techo" name="producto" value="techo" data-price="120" required>
+                                    <label for="producto-techo" class="product-label">
+                                        <img src="../assets/img/productos/techo-icon.svg" alt="Lámpara de Techo">
+                                        <span class="product-name">Lámpara de Techo</span>
+                                        <span class="product-price">120€</span>
+                                        <span class="product-description">Impresionantes lámparas colgantes</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="product-option">
+                                    <input type="radio" id="producto-personalizada" name="producto" value="personalizada" data-price="80" required>
+                                    <label for="producto-personalizada" class="product-label">
+                                        <img src="../assets/img/productos/personalizada-icon.svg" alt="Diseño Personalizado">
+                                        <span class="product-name">Diseño Personalizado</span>
+                                        <span class="product-price">80€</span>
+                                        <span class="product-description">Diseño único según tus ideas</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Plazo de Entrega -->
+                        <div class="form-section-group">
+                            <h3 class="form-subtitle">Plazo de Entrega</h3>
+                            <div class="form-group">
+                                <label for="plazo" class="form-label">Días para la entrega *</label>
+                                <input 
+                                    type="number" 
+                                    id="plazo" 
+                                    name="plazo" 
+                                    class="form-input" 
+                                    min="7" 
+                                    max="60" 
+                                    value="15" 
+                                    required
+                                >
+                                <span class="form-error" id="plazo-error"></span>
+                                <div class="plazo-info">
+                                    <small class="form-help">
+                                        <strong>Descuentos por plazo:</strong><br>
+                                        • 7-14 días: Sin descuento<br>
+                                        • 15-30 días: 5% descuento<br>
+                                        • 31-60 días: 10% descuento
+                                    </small>
+                                    <span id="descuento-plazo" class="descuento-display"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Extras -->
+                        <div class="form-section-group">
+                            <h3 class="form-subtitle">Extras Opcionales</h3>
+                            <div class="extras-grid">
+                                <div class="extra-option">
+                                    <input type="checkbox" id="extra-led-color" name="extras" value="led-color" data-price="15">
+                                    <label for="extra-led-color" class="extra-label">
+                                        <span class="extra-name">LED de Color Variable</span>
+                                        <span class="extra-price">+15€</span>
+                                        <span class="extra-description">Control RGB de temperatura de color</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="extra-option">
+                                    <input type="checkbox" id="extra-dimmer" name="extras" value="dimmer" data-price="10">
+                                    <label for="extra-dimmer" class="extra-label">
+                                        <span class="extra-name">Regulador de Intensidad</span>
+                                        <span class="extra-price">+10€</span>
+                                        <span class="extra-description">Control de brillo ajustable</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="extra-option">
+                                    <input type="checkbox" id="extra-marco" name="extras" value="marco" data-price="25">
+                                    <label for="extra-marco" class="extra-label">
+                                        <span class="extra-name">Marco Premium</span>
+                                        <span class="extra-price">+25€</span>
+                                        <span class="extra-description">Marco de madera artesanal</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="extra-option">
+                                    <input type="checkbox" id="extra-grabado" name="extras" value="grabado" data-price="12">
+                                    <label for="extra-grabado" class="extra-label">
+                                        <span class="extra-name">Grabado Personalizado</span>
+                                        <span class="extra-price">+12€</span>
+                                        <span class="extra-description">Texto o fecha grabados</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="extra-option">
+                                    <input type="checkbox" id="extra-envio" name="extras" value="envio" data-price="8">
+                                    <label for="extra-envio" class="extra-label">
+                                        <span class="extra-name">Envío Express</span>
+                                        <span class="extra-price">+8€</span>
+                                        <span class="extra-description">Entrega en 24-48h</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="extra-option">
+                                    <input type="checkbox" id="extra-embalaje" name="extras" value="embalaje" data-price="5">
+                                    <label for="extra-embalaje" class="extra-label">
+                                        <span class="extra-name">Embalaje de Regalo</span>
+                                        <span class="extra-price">+5€</span>
+                                        <span class="extra-description">Caja regalo con lazo</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Presupuesto en Tiempo Real -->
+                        <div class="presupuesto-display">
+                            <div class="presupuesto-card">
+                                <h3 class="presupuesto-title">Resumen del Presupuesto</h3>
+                                <div class="presupuesto-breakdown">
+                                    <div class="presupuesto-line">
+                                        <span>Producto base:</span>
+                                        <span id="precio-base">0€</span>
+                                    </div>
+                                    <div class="presupuesto-line">
+                                        <span>Extras seleccionados:</span>
+                                        <span id="precio-extras">0€</span>
+                                    </div>
+                                    <div class="presupuesto-line">
+                                        <span>Subtotal:</span>
+                                        <span id="subtotal">0€</span>
+                                    </div>
+                                    <div class="presupuesto-line descuento">
+                                        <span>Descuento por plazo:</span>
+                                        <span id="descuento">0€</span>
+                                    </div>
+                                    <div class="presupuesto-line total">
+                                        <span>Total:</span>
+                                        <span id="precio-total">0€</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Condiciones y Envío -->
+                    <fieldset class="form-fieldset">
+                        <legend class="fieldset-title">
+                            <span class="step-number">3</span>
+                            Condiciones y Envío
+                        </legend>
+                        
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="condiciones" name="condiciones" required>
+                                <label for="condiciones" class="checkbox-label">
+                                    Acepto las <a href="aviso-legal.html" target="_blank">condiciones de privacidad</a> y los términos de servicio *
+                                </label>
+                                <span class="form-error" id="condiciones-error"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="newsletter" name="newsletter">
+                                <label for="newsletter" class="checkbox-label">
+                                    Deseo recibir ofertas y novedades por correo electrónico
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-large">
+                                <span class="btn-icon">📋</span>
+                                Enviar Presupuesto
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                <span class="btn-icon">🔄</span>
+                                Reiniciar Formulario
+                            </button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </section>
+
+        <!-- Información adicional -->
+        <section class="info-section">
+            <div class="container">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>💡 ¿Cómo funciona?</h3>
+                        <ol>
+                            <li>Completa tus datos de contacto</li>
+                            <li>Selecciona el tipo de producto</li>
+                            <li>Elige extras y plazo de entrega</li>
+                            <li>Envía el presupuesto</li>
+                            <li>Te contactamos en 24h</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>📞 ¿Tienes dudas?</h3>
+                        <p>Nuestro equipo está aquí para ayudarte:</p>
+                        <ul>
+                            <li>📧 info@litoarte.es</li>
+                            <li>📱 +34 612 345 678</li>
+                            <li>💬 Chat en vivo</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>⭐ Garantía de Calidad</h3>
+                        <ul>
+                            <li>✅ Materiales premium</li>
+                            <li>✅ Fabricación artesanal</li>
+                            <li>✅ Garantía de 2 años</li>
+                            <li>✅ Satisfacción garantizada</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LitoArte</h3>
+                    <p>Especialistas en litofanías personalizadas desde 2020. Calidad artesanal con tecnología moderna.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Enlaces</h4>
+                    <ul>
+                        <li><a href="../index.html">Inicio</a></li>
+                        <li><a href="galeria.html">Galería</a></li>
+                        <li><a href="presupuesto.html">Presupuesto</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <address>
+                        <p>📍 Calle Artesanos, 123<br>28001 Madrid, España</p>
+                        <p>📞 +34 612 345 678</p>
+                        <p>✉️ info@litoarte.es</p>
+                    </address>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Síguenos</h4>
+                    <div class="social-links">
+                        <a href="https://instagram.com/litoarte" target="_blank" rel="noopener" aria-label="Instagram">
+                            <img src="../assets/img/icons/instagram.svg" alt="Instagram">
+                        </a>
+                        <a href="https://facebook.com/litoarte" target="_blank" rel="noopener" aria-label="Facebook">
+                            <img src="../assets/img/icons/facebook.svg" alt="Facebook">
+                        </a>
+                        <a href="https://wa.me/34612345678" target="_blank" rel="noopener" aria-label="WhatsApp">
+                            <img src="../assets/img/icons/whatsapp.svg" alt="WhatsApp">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 LitoArte. Todos los derechos reservados.</p>
+                <p><a href="aviso-legal.html">Aviso Legal</a> | <a href="aviso-legal.html">Política de Privacidad</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/presupuesto.js"></script>
+</body>
+</html>

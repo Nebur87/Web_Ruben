@@ -1,0 +1,36 @@
+{
+  "noticias": [
+    {
+      "id": 1,
+      "titulo": "Nueva Colección de Litofanías Personalizadas",
+      "fecha": "28 octubre 2025",
+      "resumen": "Lanzamos nuestra nueva línea de litofanías con diseños únicos y personalizados para cada cliente.",
+      "contenido": "Estamos emocionados de presentar nuestra nueva colección de litofanías artesanales. Cada pieza es cuidadosamente diseñada y fabricada con tecnología de impresión 3D de alta precisión, creando efectos lumínicos únicos que transforman cualquier espacio.",
+      "imagen": "assets/img/noticia1.jpg"
+    },
+    {
+      "id": 2,
+      "titulo": "Técnicas Avanzadas en Litofanías LED",
+      "fecha": "15 octubre 2025",
+      "resumen": "Innovamos con nuevas técnicas de iluminación LED que realzan la belleza de nuestras litofanías.",
+      "contenido": "Hemos desarrollado un sistema de iluminación LED personalizable que permite ajustar la intensidad y temperatura de color para cada litofanía. Esta innovación permite crear ambientes únicos adaptados a cada momento del día.",
+      "imagen": "assets/img/noticia2.jpg"
+    },
+    {
+      "id": 3,
+      "titulo": "Exposición en la Feria de Diseño 2025",
+      "fecha": "30 septiembre 2025",
+      "resumen": "Participamos en la Feria Internacional de Diseño mostrando nuestras últimas creaciones en litofanías.",
+      "contenido": "Nuestro stand en la Feria Internacional de Diseño 2025 fue un éxito rotundo. Presentamos 15 nuevos diseños de litofanías inspirados en la naturaleza y la arquitectura moderna, recibiendo reconocimiento por la innovación en técnicas de iluminación artística.",
+      "imagen": "assets/img/noticia3.jpg"
+    },
+    {
+      "id": 4,
+      "titulo": "Colaboración con Artistas Locales",
+      "fecha": "10 septiembre 2025",
+      "resumen": "Iniciamos un programa de colaboración con artistas locales para crear litofanías de edición limitada.",
+      "contenido": "Estamos colaborando con cinco artistas reconocidos de la región para crear una serie limitada de litofanías artísticas. Cada pieza combina la visión única del artista con nuestra experiencia técnica en litofanías, resultando en obras verdaderamente excepcionales.",
+      "imagen": "assets/img/noticia4.jpg"
+    }
+  ]
+}

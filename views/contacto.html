@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contacta con LitoArte. Encuentra nuestra ubicación, horarios y formas de contacto para litofanías personalizadas.">
+    <title>Contacto - LitoArte | Litofanías Personalizadas</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico">
+    
+    <!-- Leaflet CSS para OpenStreetMaps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    
+    <!-- Leaflet Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
+</head>
+<body>
+    <!-- Header con navegación fija -->
+    <header class="header-fixed">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <img src="../assets/img/logo.png" alt="LitoArte Logo" class="logo">
+                <span class="brand-name">LitoArte</span>
+            </div>
+            
+            <button class="nav-toggle" aria-label="Abrir menú de navegación">
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+            </button>
+            
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html" class="nav-link">Inicio</a></li>
+                <li class="nav-item"><a href="galeria.html" class="nav-link">Galería</a></li>
+                <li class="nav-item"><a href="presupuesto.html" class="nav-link">Presupuesto</a></li>
+                <li class="nav-item"><a href="contacto.html" class="nav-link active">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <!-- Hero de Contacto -->
+        <section class="page-hero">
+            <div class="container">
+                <h1 class="page-title">Contacto</h1>
+                <p class="page-subtitle">Estamos aquí para ayudarte. Contáctanos para cualquier consulta sobre nuestras litofanías personalizadas.</p>
+            </div>
+        </section>
+
+        <!-- Información de Contacto -->
+        <section class="contact-info-section">
+            <div class="container">
+                <div class="contact-info-grid">
+                    <div class="contact-card">
+                        <div class="contact-icon">📍</div>
+                        <h3>Dirección</h3>
+                        <address>
+                            Hauptstrasse 50<br>
+                            2575 Lüscerz<br>
+                            Suiza
+                        </address>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-icon">📞</div>
+                        <h3>Teléfono</h3>
+                        <p>
+                            <a href="tel:+41323155555">+41 32 315 55 55</a><br>
+                            Lunes a Viernes: 9:00 - 18:00<br>
+                            Sábados: 10:00 - 14:00
+                        </p>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-icon">✉️</div>
+                        <h3>Email</h3>
+                        <p>
+                            <a href="mailto:info@rubenlitofanias.ch">info@rubenlitofanias.ch</a><br>
+                            Respuesta en 24 horas<br>
+                            Soporte técnico disponible
+                        </p>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-icon">💬</div>
+                        <h3>Redes Sociales</h3>
+                        <div class="social-contact">
+                            <a href="https://instagram.com/litoarte" target="_blank" rel="noopener">Instagram</a><br>
+                            <a href="https://facebook.com/litoarte" target="_blank" rel="noopener">Facebook</a><br>
+                            <a href="https://wa.me/34612345678" target="_blank" rel="noopener">WhatsApp</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mapa Dinámico -->
+        <section class="map-section">
+            <div class="container">
+                <h2 class="section-title">Nuestra Ubicación</h2>
+                <p class="section-subtitle">Encuéntranos en Lüscerz, Suiza. Calcula tu ruta y ven a conocer nuestro taller.</p>
+                
+                <div class="map-container">
+                    <!-- Controles del mapa -->
+                    <div class="map-controls">
+                        <div class="route-input">
+                            <label for="direccion-origen">Tu dirección:</label>
+                            <input 
+                                type="text" 
+                                id="direccion-origen" 
+                                placeholder="Escribe tu dirección para calcular la ruta"
+                                class="form-input"
+                            >
+                            <button id="calcular-ruta" class="btn btn-primary">Calcular Ruta</button>
+                            <button id="mi-ubicacion" class="btn btn-secondary">Mi Ubicación</button>
+                        </div>
+                        
+                        <div class="map-info">
+                            <div id="info-ruta" class="route-info" style="display: none;">
+                                <h4>Información de la Ruta</h4>
+                                <div id="detalles-ruta"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mapa principal -->
+                    <div id="mapa-contacto" class="map-display"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Horarios de Atención -->
+        <section class="schedule-section">
+            <div class="container">
+                <h2 class="section-title">Horarios de Atención</h2>
+                <div class="schedule-grid">
+                    <div class="schedule-card">
+                        <h3>Taller y Showroom</h3>
+                        <div class="schedule-times">
+                            <div class="schedule-day">
+                                <span class="day">Lunes - Viernes</span>
+                                <span class="time">9:00 - 18:00</span>
+                            </div>
+                            <div class="schedule-day">
+                                <span class="day">Sábados</span>
+                                <span class="time">10:00 - 14:00</span>
+                            </div>
+                            <div class="schedule-day">
+                                <span class="day">Domingos</span>
+                                <span class="time">Cerrado</span>
+                            </div>
+                        </div>
+                        <p><strong>Nota:</strong> Se recomienda cita previa para atención personalizada.</p>
+                    </div>
+                    
+                    <div class="schedule-card">
+                        <h3>Soporte Online</h3>
+                        <div class="schedule-times">
+                            <div class="schedule-day">
+                                <span class="day">Email</span>
+                                <span class="time">24/7</span>
+                            </div>
+                            <div class="schedule-day">
+                                <span class="day">WhatsApp</span>
+                                <span class="time">9:00 - 20:00</span>
+                            </div>
+                            <div class="schedule-day">
+                                <span class="day">Chat Web</span>
+                                <span class="time">9:00 - 18:00</span>
+                            </div>
+                        </div>
+                        <p><strong>Respuesta garantizada:</strong> Máximo 24 horas por email.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formulario de Contacto -->
+        <section class="contact-form-section">
+            <div class="container">
+                <div class="contact-form-grid">
+                    <div class="form-info">
+                        <h2>Envíanos un Mensaje</h2>
+                        <p>¿Tienes una idea específica? ¿Necesitas más información? Escríbenos y te responderemos lo antes posible.</p>
+                        
+                        <div class="contact-features">
+                            <div class="feature">
+                                <span class="feature-icon">⚡</span>
+                                <span>Respuesta rápida</span>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">🎨</span>
+                                <span>Asesoramiento personalizado</span>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">💡</span>
+                                <span>Ideas y sugerencias</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form id="contact-form" class="contact-form">
+                        <div class="form-group">
+                            <label for="contact-nombre" class="form-label">Nombre *</label>
+                            <input 
+                                type="text" 
+                                id="contact-nombre" 
+                                name="nombre" 
+                                class="form-input" 
+                                required
+                                autocomplete="given-name"
+                            >
+                            <span class="form-error" id="contact-nombre-error"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-email" class="form-label">Email *</label>
+                            <input 
+                                type="email" 
+                                id="contact-email" 
+                                name="email" 
+                                class="form-input" 
+                                required
+                                autocomplete="email"
+                            >
+                            <span class="form-error" id="contact-email-error"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-telefono" class="form-label">Teléfono</label>
+                            <input 
+                                type="tel" 
+                                id="contact-telefono" 
+                                name="telefono" 
+                                class="form-input"
+                                autocomplete="tel"
+                            >
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-asunto" class="form-label">Asunto *</label>
+                            <select id="contact-asunto" name="asunto" class="form-input" required>
+                                <option value="">Selecciona un asunto</option>
+                                <option value="presupuesto">Solicitar presupuesto</option>
+                                <option value="informacion">Información general</option>
+                                <option value="personalizado">Diseño personalizado</option>
+                                <option value="tecnico">Soporte técnico</option>
+                                <option value="colaboracion">Colaboración</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                            <span class="form-error" id="contact-asunto-error"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-mensaje" class="form-label">Mensaje *</label>
+                            <textarea 
+                                id="contact-mensaje" 
+                                name="mensaje" 
+                                class="form-textarea" 
+                                rows="5" 
+                                required
+                                placeholder="Cuéntanos tu idea o consulta..."
+                            ></textarea>
+                            <span class="form-error" id="contact-mensaje-error"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="contact-newsletter" name="newsletter">
+                                <label for="contact-newsletter" class="checkbox-label">
+                                    Quiero recibir ofertas y novedades por email
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-large">
+                            <span class="btn-icon">📧</span>
+                            Enviar Mensaje
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <h2 class="section-title">Preguntas Frecuentes</h2>
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <h3>¿Cuánto tarda la fabricación?</h3>
+                        <p>El tiempo de fabricación varía entre 7 y 21 días dependiendo de la complejidad del diseño y la carga de trabajo. Te informaremos del plazo exacto al confirmar tu pedido.</p>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3>¿Qué formato de imagen necesito?</h3>
+                        <p>Aceptamos JPG, PNG y TIFF en alta resolución (mínimo 300 DPI). Para mejores resultados, usa imágenes con buen contraste y evita fondos muy oscuros.</p>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3>¿Hacen envíos a toda Europa?</h3>
+                        <p>Sí, realizamos envíos a toda Europa desde Suiza. El coste varía según la ubicación y urgencia. Envío gratuito para pedidos superiores a 150 CHF.</p>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3>¿Ofrecen garantía?</h3>
+                        <p>Todas nuestras litofanías incluyen 2 años de garantía contra defectos de fabricación. También ofrecemos servicio de reparación post-garantía.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LitoArte</h3>
+                    <p>Especialistas en litofanías personalizadas desde 2020. Calidad artesanal con tecnología moderna.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Enlaces</h4>
+                    <ul>
+                        <li><a href="../index.html">Inicio</a></li>
+                        <li><a href="galeria.html">Galería</a></li>
+                        <li><a href="presupuesto.html">Presupuesto</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <address>
+                        <p>📍 Hauptstrasse 50<br>2575 Lüscerz, Suiza</p>
+                        <p>📞 +34 612 345 678</p>
+                        <p>✉️ info@litoarte.es</p>
+                    </address>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Síguenos</h4>
+                    <div class="social-links">
+                        <a href="https://instagram.com/litoarte" target="_blank" rel="noopener" aria-label="Instagram">
+                            <img src="../assets/img/icons/instagram.svg" alt="Instagram">
+                        </a>
+                        <a href="https://facebook.com/litoarte" target="_blank" rel="noopener" aria-label="Facebook">
+                            <img src="../assets/img/icons/facebook.svg" alt="Facebook">
+                        </a>
+                        <a href="https://wa.me/34612345678" target="_blank" rel="noopener" aria-label="WhatsApp">
+                            <img src="../assets/img/icons/whatsapp.svg" alt="WhatsApp">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 LitoArte. Todos los derechos reservados.</p>
+                <p><a href="aviso-legal.html">Aviso Legal</a> | <a href="aviso-legal.html">Política de Privacidad</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- Leaflet Routing Machine JS -->
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    
+    <!-- JavaScript personalizado -->
+    <script src="../js/contacto.js"></script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Galería de litofanías personalizadas. Descubre nuestras creaciones únicas en lámparas artesanales.">
+    <title>Galería - LitoArte | Litofanías Personalizadas</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico">
+</head>
+<body>
+    <!-- Header con navegación fija -->
+    <header class="header-fixed">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <img src="../assets/img/logo.png" alt="LitoArte Logo" class="logo">
+                <span class="brand-name">LitoArte</span>
+            </div>
+            
+            <button class="nav-toggle" aria-label="Abrir menú de navegación">
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+            </button>
+            
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html" class="nav-link">Inicio</a></li>
+                <li class="nav-item"><a href="galeria.html" class="nav-link active">Galería</a></li>
+                <li class="nav-item"><a href="presupuesto.html" class="nav-link">Presupuesto</a></li>
+                <li class="nav-item"><a href="contacto.html" class="nav-link">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <!-- Hero de Galería -->
+        <section class="page-hero">
+            <div class="container">
+                <h1 class="page-title">Galería de Litofanías</h1>
+                <p class="page-subtitle">Descubre nuestras creaciones únicas. Cada litofanía cuenta una historia especial iluminada con arte.</p>
+            </div>
+        </section>
+
+        <!-- Filtros de Galería -->
+        <section class="gallery-filters">
+            <div class="container">
+                <div class="filters-wrapper">
+                    <button class="filter-btn active" data-filter="all">Todas</button>
+                    <button class="filter-btn" data-filter="mesa">Lámparas de Mesa</button>
+                    <button class="filter-btn" data-filter="pared">Lámparas de Pared</button>
+                    <button class="filter-btn" data-filter="techo">Lámparas de Techo</button>
+                    <button class="filter-btn" data-filter="personalizada">Personalizadas</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Galería Principal -->
+        <section class="gallery-section">
+            <div class="container">
+                <div class="gallery-grid" id="gallery-grid">
+                    <!-- Las imágenes se cargarán dinámicamente con JavaScript -->
+                    
+                    <!-- Ejemplo de estructura para cada imagen (se generará dinámicamente) -->
+                    <article class="gallery-item" data-category="mesa">
+                        <div class="gallery-image">
+                            <img src="../assets/img/galeria/mesa-01.jpg" alt="Lámpara de mesa con litofanía familiar" loading="lazy">
+                            <div class="gallery-overlay">
+                                <button class="gallery-btn view-btn" data-image="../assets/img/galeria/mesa-01.jpg" data-title="Lámpara de Mesa Familiar">
+                                    <span class="icon">👁️</span>
+                                    Ver
+                                </button>
+                                <button class="gallery-btn info-btn" data-description="Lámpara de mesa personalizada con imagen familiar. Iluminación LED cálida.">
+                                    <span class="icon">ℹ️</span>
+                                    Info
+                                </button>
+                            </div>
+                        </div>
+                        <div class="gallery-info">
+                            <h3>Lámpara de Mesa Familiar</h3>
+                            <p>Litofanía personalizada para mesa</p>
+                            <span class="gallery-price">45€</span>
+                        </div>
+                    </article>
+
+                    <article class="gallery-item" data-category="pared">
+                        <div class="gallery-image">
+                            <img src="../assets/img/galeria/pared-01.jpg" alt="Lámpara de pared con litofanía paisaje" loading="lazy">
+                            <div class="gallery-overlay">
+                                <button class="gallery-btn view-btn" data-image="../assets/img/galeria/pared-01.jpg" data-title="Lámpara de Pared Paisaje">
+                                    <span class="icon">👁️</span>
+                                    Ver
+                                </button>
+                                <button class="gallery-btn info-btn" data-description="Elegante aplique de pared con litofanía de paisaje montañoso.">
+                                    <span class="icon">ℹ️</span>
+                                    Info
+                                </button>
+                            </div>
+                        </div>
+                        <div class="gallery-info">
+                            <h3>Lámpara de Pared Paisaje</h3>
+                            <p>Aplique con litofanía de montañas</p>
+                            <span class="gallery-price">65€</span>
+                        </div>
+                    </article>
+
+                    <article class="gallery-item" data-category="techo">
+                        <div class="gallery-image">
+                            <img src="../assets/img/galeria/techo-01.jpg" alt="Lámpara de techo con litofanía arquitectónica" loading="lazy">
+                            <div class="gallery-overlay">
+                                <button class="gallery-btn view-btn" data-image="../assets/img/galeria/techo-01.jpg" data-title="Lámpara de Techo Arquitectónica">
+                                    <span class="icon">👁️</span>
+                                    Ver
+                                </button>
+                                <button class="gallery-btn info-btn" data-description="Impresionante lámpara de techo con diseño arquitectónico moderno.">
+                                    <span class="icon">ℹ️</span>
+                                    Info
+                                </button>
+                            </div>
+                        </div>
+                        <div class="gallery-info">
+                            <h3>Lámpara de Techo Arquitectónica</h3>
+                            <p>Diseño moderno para techos</p>
+                            <span class="gallery-price">120€</span>
+                        </div>
+                    </article>
+
+                    <article class="gallery-item" data-category="personalizada">
+                        <div class="gallery-image">
+                            <img src="../assets/img/galeria/personalizada-01.jpg" alt="Litofanía personalizada con mascota" loading="lazy">
+                            <div class="gallery-overlay">
+                                <button class="gallery-btn view-btn" data-image="../assets/img/galeria/personalizada-01.jpg" data-title="Litofanía Personalizada Mascota">
+                                    <span class="icon">👁️</span>
+                                    Ver
+                                </button>
+                                <button class="gallery-btn info-btn" data-description="Litofanía especial creada a partir de una fotografía de mascota querida.">
+                                    <span class="icon">ℹ️</span>
+                                    Info
+                                </button>
+                            </div>
+                        </div>
+                        <div class="gallery-info">
+                            <h3>Litofanía Personalizada Mascota</h3>
+                            <p>Creación única desde tu foto</p>
+                            <span class="gallery-price">80€</span>
+                        </div>
+                    </article>
+
+                    <article class="gallery-item" data-category="mesa">
+                        <div class="gallery-image">
+                            <img src="../assets/img/galeria/mesa-02.jpg" alt="Lámpara de mesa con litofanía vintage" loading="lazy">
+                            <div class="gallery-overlay">
+                                <button class="gallery-btn view-btn" data-image="../assets/img/galeria/mesa-02.jpg" data-title="Lámpara de Mesa Vintage">
+                                    <span class="icon">👁️</span>
+                                    Ver
+                                </button>
+                                <button class="gallery-btn info-btn" data-description="Diseño vintage con acabados en madera y litofanía clásica.">
+                                    <span class="icon">ℹ️</span>
+                                    Info
+                                </button>
+                            </div>
+                        </div>
+                        <div class="gallery-info">
+                            <h3>Lámpara de Mesa Vintage</h3>
+                            <p>Estilo clásico atemporal</p>
+                            <span class="gallery-price">55€</span>
+                        </div>
+                    </article>
+
+                    <article class="gallery-item" data-category="pared">
+                        <div class="gallery-image">
+                            <img src="../assets/img/galeria/pared-02.jpg" alt="Lámpara de pared con litofanía floral" loading="lazy">
+                            <div class="gallery-overlay">
+                                <button class="gallery-btn view-btn" data-image="../assets/img/galeria/pared-02.jpg" data-title="Lámpara de Pared Floral">
+                                    <span class="icon">👁️</span>
+                                    Ver
+                                </button>
+                                <button class="gallery-btn info-btn" data-description="Delicado diseño floral para espacios elegantes y relajantes.">
+                                    <span class="icon">ℹ️</span>
+                                    Info
+                                </button>
+                            </div>
+                        </div>
+                        <div class="gallery-info">
+                            <h3>Lámpara de Pared Floral</h3>
+                            <p>Elegancia natural</p>
+                            <span class="gallery-price">70€</span>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Botón para cargar más -->
+                <div class="gallery-actions">
+                    <button id="load-more" class="btn btn-outline">Cargar más imágenes</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal de imagen ampliada (Lightbox) -->
+        <div id="lightbox" class="lightbox" role="dialog" aria-labelledby="lightbox-title" aria-hidden="true">
+            <div class="lightbox-content">
+                <button class="lightbox-close" aria-label="Cerrar imagen ampliada">&times;</button>
+                <button class="lightbox-prev" aria-label="Imagen anterior">&#8249;</button>
+                <button class="lightbox-next" aria-label="Imagen siguiente">&#8250;</button>
+                
+                <div class="lightbox-image-container">
+                    <img id="lightbox-image" src="" alt="" class="lightbox-image">
+                </div>
+                
+                <div class="lightbox-info">
+                    <h3 id="lightbox-title"></h3>
+                    <p id="lightbox-description"></p>
+                    <div class="lightbox-actions">
+                        <a href="presupuesto.html" class="btn btn-primary">Solicitar Presupuesto</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de llamada a la acción -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>¿Te gusta lo que ves?</h2>
+                    <p>Crea tu propia litofanía personalizada. Convierte tus mejores recuerdos en arte lumínico único.</p>
+                    <div class="cta-buttons">
+                        <a href="presupuesto.html" class="btn btn-primary">Solicitar Presupuesto</a>
+                        <a href="contacto.html" class="btn btn-secondary">Contactar</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LitoArte</h3>
+                    <p>Especialistas en litofanías personalizadas desde 2020. Calidad artesanal con tecnología moderna.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Enlaces</h4>
+                    <ul>
+                        <li><a href="../index.html">Inicio</a></li>
+                        <li><a href="galeria.html">Galería</a></li>
+                        <li><a href="presupuesto.html">Presupuesto</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <address>
+                        <p>📍 Calle Artesanos, 123<br>28001 Madrid, España</p>
+                        <p>📞 +34 612 345 678</p>
+                        <p>✉️ info@litoarte.es</p>
+                    </address>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Síguenos</h4>
+                    <div class="social-links">
+                        <a href="https://instagram.com/litoarte" target="_blank" rel="noopener" aria-label="Instagram">
+                            <img src="../assets/img/icons/instagram.svg" alt="Instagram">
+                        </a>
+                        <a href="https://facebook.com/litoarte" target="_blank" rel="noopener" aria-label="Facebook">
+                            <img src="../assets/img/icons/facebook.svg" alt="Facebook">
+                        </a>
+                        <a href="https://wa.me/34612345678" target="_blank" rel="noopener" aria-label="WhatsApp">
+                            <img src="../assets/img/icons/whatsapp.svg" alt="WhatsApp">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 LitoArte. Todos los derechos reservados.</p>
+                <p><a href="aviso-legal.html">Aviso Legal</a> | <a href="aviso-legal.html">Política de Privacidad</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/galeria.js"></script>
+</body>
+</html>
