@@ -730,7 +730,7 @@ function showFieldError(fieldId, message) {
     }
 }
 
-function submitPresupuesto() {
+async function submitPresupuesto() {
     // Recopilar datos del formulario
     const formData = {
         contacto: {
@@ -739,37 +739,65 @@ function submitPresupuesto() {
             telefono: document.getElementById('telefono').value,
             email: document.getElementById('email').value
         },
-        producto: presupuestoData.producto,
+        producto: {
+            tipo: presupuestoData.producto,
+            nombre: PRODUCTOS[presupuestoData.producto].nombre
+        },
+        cantidad: presupuestoData.cantidad,
+        cantidadLitofanias: presupuestoData.cantidadLitofanias,
         plazo: presupuestoData.plazo,
-        extras: presupuestoData.extras,
-        presupuesto: presupuestoData.precios,
-        newsletter: document.getElementById('newsletter')?.checked || false,
-        fecha: new Date().toISOString()
+        extras: presupuestoData.extras.map(extraId => ({
+            id: extraId,
+            nombre: EXTRAS[extraId].nombre,
+            precio: EXTRAS[extraId].precio
+        })),
+        precios: presupuestoData.precios,
+        newsletter: document.getElementById('newsletter')?.checked || false
     };
     
-    console.log('📤 Enviando presupuesto:', formData);
+    console.log('📤 Procesando pedido:', formData);
     
-    // Simular envío
     const submitBtn = document.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
     
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Enviando...';
+    submitBtn.textContent = 'Procesando...';
     
-    // Simular delay del servidor
-    setTimeout(() => {
-        // Mostrar modal de éxito
-        showSuccessModal(formData);
+    try {
+        // Verificar que el cliente API esté disponible
+        if (typeof window.APIClient === 'undefined') {
+            throw new Error('Cliente API no disponible. Verifica que api-client.js esté cargado.');
+        }
+
+        // 1. Crear pedido en el servidor
+        console.log('📝 Creando pedido en el servidor...');
+        const pedidoResponse = await window.APIClient.crearPedido(formData);
+        const numeroPedido = pedidoResponse.numeroPedido;
         
-        // Resetear formulario
-        setTimeout(() => {
-            resetForm();
-        }, 2000);
+        console.log(`✅ Pedido creado: ${numeroPedido}`);
         
+        // 2. Crear sesión de pago de Stripe
+        console.log('💳 Creando sesión de pago...');
+        const sessionResponse = await window.APIClient.crearSessionPago(numeroPedido);
+        
+        console.log(`✅ Sesión de pago creada: ${sessionResponse.sessionId}`);
+        
+        // 3. Redirigir a Stripe Checkout
+        console.log('🔄 Redirigiendo a pasarela de pago...');
+        window.APIClient.redirigirAPago(sessionResponse.url);
+        
+        // El código aquí no se ejecutará porque se redirige a Stripe
+        
+    } catch (error) {
+        console.error('❌ Error al procesar el pedido:', error);
+        
+        // Mostrar error al usuario
+        mostrarErrorPago(error.message);
+        
+        // Restaurar botón
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
-        
-    }, 2000);
+    }
 }
 
 function showSuccessModal(data) {
@@ -831,6 +859,47 @@ function closeSuccessModal(button) {
             }
         }, 300);
     }
+}
+
+function mostrarErrorPago(mensaje) {
+    const modal = document.createElement('div');
+    modal.className = 'success-modal-overlay';
+    modal.innerHTML = `
+        <div class="success-modal-content" style="border-top: 4px solid #dc3545;">
+            <div class="success-icon" style="color: #dc3545;">❌</div>
+            <h3>Error al Procesar el Pago</h3>
+            <p>${mensaje}</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
+                Por favor, verifica tu configuración e intenta nuevamente.
+            </p>
+            <div class="success-actions">
+                <button class="btn btn-primary" onclick="closeSuccessModal(this)">Entendido</button>
+            </div>
+        </div>
+    `;
+    
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    `;
+    
+    document.body.appendChild(modal);
+    
+    requestAnimationFrame(() => {
+        modal.style.opacity = '1';
+    });
+    
+    showToast('Error al procesar el pago', 'error');
 }
 
 function resetForm() {

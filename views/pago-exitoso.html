@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Confirmación de pago - Litum 3D">
+    <title>Pago Exitoso - Litum 3D</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .pago-exitoso-container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .success-icon-large {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .pedido-details {
+            background: var(--color-light);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .pedido-details h3 {
+            margin-top: 0;
+            color: var(--color-primary);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--color-primary);
+        }
+
+        .loading-spinner {
+            border: 4px solid var(--color-light);
+            border-top: 4px solid var(--color-primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .email-status {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .email-status.error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="../index.html" class="logo">LitoArte</a>
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="galeria.html">Galería</a></li>
+                    <li><a href="presupuesto.html" class="active">Presupuesto</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pago-exitoso-container">
+        <div id="loading-section">
+            <div class="loading-spinner"></div>
+            <h2>Procesando tu pedido...</h2>
+            <p>Por favor espera mientras confirmamos tu pago y enviamos las confirmaciones.</p>
+        </div>
+
+        <div id="success-section" style="display: none;">
+            <div class="success-icon-large">✅</div>
+            <h1>¡Pago Realizado con Éxito!</h1>
+            <p class="lead">Gracias por tu compra. Tu pedido ha sido confirmado.</p>
+
+            <div class="pedido-details" id="pedido-details">
+                <!-- Se llenará dinámicamente con JavaScript -->
+            </div>
+
+            <div class="email-status" id="email-status">
+                <!-- Se llenará dinámicamente -->
+            </div>
+
+            <div class="actions-grid">
+                <a href="../index.html" class="btn btn-secondary">Volver al Inicio</a>
+                <a href="presupuesto.html" class="btn btn-outline">Hacer Otro Pedido</a>
+                <a href="contacto.html" class="btn btn-outline">Contactar</a>
+            </div>
+        </div>
+
+        <div id="error-section" style="display: none;">
+            <div class="success-icon-large" style="color: #dc3545;">❌</div>
+            <h1>No se pudo confirmar el pedido</h1>
+            <p>Hubo un problema al recuperar la información de tu pedido.</p>
+            <p>Si realizaste un pago, por favor contacta con nosotros con tu número de pedido.</p>
+            
+            <div class="actions-grid">
+                <a href="presupuesto.html" class="btn btn-primary">Volver al Presupuesto</a>
+                <a href="contacto.html" class="btn btn-secondary">Contactar Soporte</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Litum 3D</h3>
+                    <p>Transformamos tus recuerdos en luz</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces</h4>
+                    <ul>
+                        <li><a href="../index.html">Inicio</a></li>
+                        <li><a href="galeria.html">Galería</a></li>
+                        <li><a href="presupuesto.html">Presupuesto</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="aviso-legal.html">Aviso Legal</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Litum 3D. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/config.js"></script>
+    <script src="../js/payment.js"></script>
+    <script src="../js/email.js"></script>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    
+    <script>
+        /**
+         * Procesar confirmación de pago exitoso
+         */
+        async function procesarConfirmacion() {
+            try {
+                // 1. Recuperar datos del pedido del localStorage
+                const pedido = window.PaymentModule.recuperarPedido();
+                
+                if (!pedido) {
+                    throw new Error('No se encontró información del pedido');
+                }
+
+                console.log('📦 Pedido recuperado:', pedido);
+
+                // 2. Mostrar detalles del pedido
+                mostrarDetallesPedido(pedido);
+
+                // 3. Enviar emails de confirmación
+                const emailStatus = document.getElementById('email-status');
+                emailStatus.innerHTML = '<div class="loading-spinner" style="width: 30px; height: 30px;"></div><p>Enviando confirmaciones por email...</p>';
+
+                const resultados = await window.EmailModule.enviarEmailsConfirmacion(pedido);
+
+                // 4. Mostrar resultado del envío de emails
+                if (resultados.exito) {
+                    emailStatus.className = 'email-status';
+                    emailStatus.innerHTML = `
+                        <strong>✅ Confirmación enviada</strong>
+                        <p>Hemos enviado un email de confirmación a: <strong>${pedido.cliente.email}</strong></p>
+                        <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+                            Revisa tu bandeja de entrada y spam. Si no recibes el email en unos minutos, contacta con nosotros.
+                        </p>
+                    `;
+                } else {
+                    emailStatus.className = 'email-status error';
+                    emailStatus.innerHTML = `
+                        <strong>⚠️ Error al enviar emails</strong>
+                        <p>Tu pedido se procesó correctamente, pero hubo un problema al enviar la confirmación.</p>
+                        <p>Número de pedido: <strong>${pedido.numeroPedido}</strong></p>
+                        <p style="font-size: 0.9rem;">Por favor, guarda este número y contacta con nosotros.</p>
+                    `;
+                }
+
+                // 5. Limpiar pedido del localStorage
+                window.PaymentModule.limpiarPedido();
+
+                // 6. Mostrar sección de éxito
+                document.getElementById('loading-section').style.display = 'none';
+                document.getElementById('success-section').style.display = 'block';
+
+            } catch (error) {
+                console.error('❌ Error al procesar confirmación:', error);
+                
+                // Mostrar sección de error
+                document.getElementById('loading-section').style.display = 'none';
+                document.getElementById('error-section').style.display = 'block';
+            }
+        }
+
+        /**
+         * Mostrar detalles del pedido en la página
+         */
+        function mostrarDetallesPedido(pedido) {
+            const container = document.getElementById('pedido-details');
+            
+            let extrasHTML = '';
+            if (pedido.extras.length > 0) {
+                extrasHTML = pedido.extras.map(e => 
+                    `<div class="detail-row">
+                        <span>${e.nombre}</span>
+                        <span>${e.precio.toFixed(2)}€</span>
+                    </div>`
+                ).join('');
+            }
+
+            container.innerHTML = `
+                <h3>Resumen del Pedido</h3>
+                <div class="detail-row">
+                    <span><strong>Número de Pedido:</strong></span>
+                    <span><strong>${pedido.numeroPedido}</strong></span>
+                </div>
+                <div class="detail-row">
+                    <span>Fecha:</span>
+                    <span>${pedido.fechaFormateada}</span>
+                </div>
+                <div class="detail-row">
+                    <span>Producto:</span>
+                    <span>${pedido.producto.nombre}</span>
+                </div>
+                ${pedido.producto.cantidadLitofanias ? `
+                <div class="detail-row">
+                    <span>Cantidad de litofanías:</span>
+                    <span>${pedido.producto.cantidadLitofanias}</span>
+                </div>` : ''}
+                <div class="detail-row">
+                    <span>Plazo de entrega:</span>
+                    <span>${pedido.producto.plazo} días</span>
+                </div>
+                ${extrasHTML}
+                ${pedido.precios.descuento > 0 ? `
+                <div class="detail-row">
+                    <span>Descuento:</span>
+                    <span style="color: #4caf50;">-${pedido.precios.descuento.toFixed(2)}€</span>
+                </div>` : ''}
+                <div class="detail-row">
+                    <span>TOTAL PAGADO:</span>
+                    <span>${pedido.precios.total.toFixed(2)}€</span>
+                </div>
+            `;
+        }
+
+        // Ejecutar al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar si venimos de Stripe con parámetro de pedido
+            const urlParams = new URLSearchParams(window.location.search);
+            const numeroPedido = urlParams.get('pedido');
+
+            if (numeroPedido) {
+                console.log('✅ Confirmación de pago para pedido:', numeroPedido);
+                procesarConfirmacion();
+            } else {
+                // No hay número de pedido, mostrar error
+                document.getElementById('loading-section').style.display = 'none';
+                document.getElementById('error-section').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

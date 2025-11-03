@@ -1,0 +1,40 @@
+# Archivos de configuración con claves sensibles (OBSOLETOS - ahora se usa backend/.env)
+js/config.js
+js/payment.js
+js/email.js
+
+# Backend
+backend/.env
+backend/node_modules/
+backend/database/*.db
+backend/database/*.db-journal
+
+# Node modules (si usas Node.js en el futuro)
+node_modules/
+package-lock.json
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Archivos de log
+*.log
+npm-debug.log*
+
+# Archivos temporales
+*.tmp
+*.temp
+.cache/
+
+# Archivos de entorno
+.env
+.env.local
+.env.production

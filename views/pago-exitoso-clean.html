@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Confirmación de pago - LitoArte">
+    <title>Pago Exitoso - LitoArte</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/pago-exitoso.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-fixed">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <img src="../assets/img/litum-logo.jpg" alt="Litum 3D Logo" class="logo">
+                <span class="brand-name">Litum 3D</span>
+            </div>
+            
+            <button class="nav-toggle" aria-label="Abrir menú de navegación">
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+            </button>
+            
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="../index.html" class="nav-link">Inicio</a></li>
+                <li class="nav-item"><a href="galeria.html" class="nav-link">Galería</a></li>
+                <li class="nav-item"><a href="presupuesto.html" class="nav-link active">Presupuesto</a></li>
+                <li class="nav-item"><a href="contacto.html" class="nav-link">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pago-exitoso-container">
+        <!-- Sección de Carga -->
+        <div id="loading-section">
+            <div class="loading-spinner"></div>
+            <h2>Procesando tu pedido...</h2>
+            <p>Por favor espera mientras confirmamos tu pago y enviamos las confirmaciones.</p>
+        </div>
+
+        <!-- Sección de Éxito -->
+        <div id="success-section" style="display: none;">
+            <div class="success-icon-large">✅</div>
+            <h1>¡Pago Realizado con Éxito!</h1>
+            <p class="lead">Gracias por tu compra. Tu pedido ha sido confirmado.</p>
+
+            <div class="pedido-details" id="pedido-details">
+                <!-- Se llenará dinámicamente con JavaScript -->
+            </div>
+
+            <div class="email-status" id="email-status">
+                <!-- Se llenará dinámicamente -->
+            </div>
+
+            <div class="actions-grid">
+                <a href="../index.html" class="btn btn-secondary">Volver al Inicio</a>
+                <a href="presupuesto.html" class="btn btn-outline">Hacer Otro Pedido</a>
+                <a href="contacto.html" class="btn btn-outline">Contactar</a>
+            </div>
+        </div>
+
+        <!-- Sección de Error -->
+        <div id="error-section" style="display: none;">
+            <div class="success-icon-large" style="color: #dc3545;">❌</div>
+            <h1>No se pudo confirmar el pedido</h1>
+            <p>Hubo un problema al recuperar la información de tu pedido.</p>
+            <p>Si realizaste un pago, por favor contacta con nosotros con tu número de pedido.</p>
+            
+            <div class="actions-grid">
+                <a href="presupuesto.html" class="btn btn-primary">Volver al Presupuesto</a>
+                <a href="contacto.html" class="btn btn-secondary">Contactar Soporte</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-column">
+                <h3 class="footer-title">Litum 3D</h3>
+                <p class="footer-text">Transforma tus recuerdos más preciados en obras de arte únicas.</p>
+            </div>
+            
+            <div class="footer-column">
+                <h4 class="footer-subtitle">Enlaces</h4>
+                <ul class="footer-links">
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="galeria.html">Galería</a></li>
+                    <li><a href="presupuesto.html">Presupuesto</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4 class="footer-subtitle">Legal</h4>
+                <ul class="footer-links">
+                    <li><a href="aviso-legal.html">Aviso Legal</a></li>
+                    <li><a href="aviso-legal.html">Política de Privacidad</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Litum 3D. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/pago-exitoso.js"></script>
+</body>
+</html>

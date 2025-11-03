@@ -1,0 +1,31 @@
+# Variables de entorno
+.env
+
+# Dependencias
+node_modules/
+
+# Base de datos
+database/*.db
+database/*.db-journal
+database/*.db-wal
+database/*.db-shm
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos temporales
+tmp/
+temp/
+*.tmp
