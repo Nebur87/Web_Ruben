@@ -11,12 +11,12 @@ let routeControl = null;
 
 // Datos de la tienda
 const STORE_DATA = {
-    name: 'Ruben Litofanías',
+    name: 'Litum 3D',
     lat: 47.061,  // Lüscerz, Suiza
     lng: 7.188,
-    address: 'Hauptstrasse 50, 2575 Lüscerz, Suiza',
-    phone: '+41 32 315 55 55',
-    email: 'info@rubenlitofanias.ch',
+    address: 'Hauptstrasse 50, 2576 Lüscerz, Suiza',
+    phone: '+41 77 218 62 29',
+    email: 'info@litum3d.ch',
     hours: {
         'Lunes': '09:00 - 18:00',
         'Martes': '09:00 - 18:00',

@@ -6,15 +6,15 @@
     <meta name="description" content="Solicita tu presupuesto personalizado para litofanías. Calcula el precio en tiempo real según tus preferencias.">
     <title>Presupuesto - LitoArte | Litofanías Personalizadas</title>
     <link rel="stylesheet" href="../css/styles.css">
-    <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="../favicon-32x32.png">
 </head>
 <body>
     <!-- Header con navegación fija -->
     <header class="header-fixed">
         <nav class="navbar">
             <div class="nav-brand">
-                <img src="../assets/img/logo.png" alt="LitoArte Logo" class="logo">
-                <span class="brand-name">LitoArte</span>
+                <img src="../assets/img/litum-logo.jpg" alt="Litum 3D Logo" class="logo">
+                <span class="brand-name">Litum 3D</span>
             </div>
             
             <button class="nav-toggle" aria-label="Abrir menú de navegación">
@@ -136,7 +136,7 @@
                                     <label for="producto-mesa" class="product-label">
                                         <img src="../assets/img/productos/mesa-icon.svg" alt="Lámpara de Mesa">
                                         <span class="product-name">Lámpara de Mesa</span>
-                                        <span class="product-price">45€</span>
+                                        <span class="product-price">50€</span>
                                         <span class="product-description">Perfecta para escritorios y mesitas</span>
                                     </label>
                                 </div>
@@ -146,8 +146,9 @@
                                     <label for="producto-pared" class="product-label">
                                         <img src="../assets/img/productos/pared-icon.svg" alt="Lámpara de Pared">
                                         <span class="product-name">Lámpara de Pared</span>
-                                        <span class="product-price">65€</span>
+                                        <span class="product-price">50€ + 10€ soporte</span>
                                         <span class="product-description">Elegantes apliques de pared</span>
+                                        <span class="product-discount">15% desc. en la 2ª unidad</span>
                                     </label>
                                 </div>
                                 
@@ -156,23 +157,55 @@
                                     <label for="producto-techo" class="product-label">
                                         <img src="../assets/img/productos/techo-icon.svg" alt="Lámpara de Techo">
                                         <span class="product-name">Lámpara de Techo</span>
-                                        <span class="product-price">120€</span>
+                                        <span class="product-price">100€ +50€ Soporte</span>
                                         <span class="product-description">Impresionantes lámparas colgantes</span>
-                                    </label>
-                                </div>
-                                
-                                <div class="product-option">
-                                    <input type="radio" id="producto-personalizada" name="producto" value="personalizada" data-price="80" required>
-                                    <label for="producto-personalizada" class="product-label">
-                                        <img src="../assets/img/productos/personalizada-icon.svg" alt="Diseño Personalizado">
-                                        <span class="product-name">Diseño Personalizado</span>
-                                        <span class="product-price">80€</span>
-                                        <span class="product-description">Diseño único según tus ideas</span>
                                     </label>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Configuración específica para Lámpara de Pared -->
+                        <div class="form-section-group" id="config-pared" style="display: none;">
+                            <h3 class="form-subtitle">Configuración Lámpara de Pared</h3>
+                            <div class="form-group">
+                                <label for="cantidad-pared" class="form-label">Cantidad de lámparas</label>
+                                <select id="cantidad-pared" name="cantidad-pared" class="form-input">
+                                    <option value="1">1 lámpara - 65€</option>
+                                    <option value="2">2 lámparas - 120€ (15% desc. en la 2ª)</option>
+                                </select>
+                                <small class="form-help">
+                                    <span class="discount-highlight">🔥 Oferta especial:</span> 
+                                    15% de descuento en la segunda lámpara de pared
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Configuración específica para Lámpara de Techo -->
+                        <div class="form-section-group" id="config-techo" style="display: none;">
+                            <h3 class="form-subtitle">Configuración Lámpara de Techo</h3>
+                            <div class="form-group">
+                                <label for="cantidad-litofanias" class="form-label">Número de litofanías</label>
+                                <select id="cantidad-litofanias" name="cantidad-litofanias" class="form-input">
+                                    <option value="2">2 litofanías - 150€ (100€ + 50€ soporte)</option>
+                                    <option value="3">3 litofanías - 200€ (150€ + 50€ soporte)</option>
+                                    <option value="4">4 litofanías - 250€ (200€ + 50€ soporte)</option>
+                                    <option value="5">5 litofanías - 300€ (250€ + 50€ soporte)</option>
+                                </select>
+                                <small class="form-help">
+                                    Cada litofanía adicional: 50€ | Soporte fijo: 50€
+                                </small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Imágenes requeridas</label>
+                                <div id="imagenes-info" class="images-requirement">
+                                    <span class="requirement-text">
+                                        📸 Se necesitan <strong id="total-imagenes">4</strong> imágenes 
+                                        (<strong id="imagenes-por-litofania">2</strong> por cada litofanía)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <!-- Plazo de Entrega -->
                         <div class="form-section-group">
                             <h3 class="form-subtitle">Plazo de Entrega</h3>
@@ -185,7 +218,7 @@
                                     class="form-input" 
                                     min="7" 
                                     max="60" 
-                                    value="15" 
+                                    value="10" 
                                     required
                                 >
                                 <span class="form-error" id="plazo-error"></span>
@@ -204,48 +237,15 @@
                         <!-- Extras -->
                         <div class="form-section-group">
                             <h3 class="form-subtitle">Extras Opcionales</h3>
-                            <div class="extras-grid">
-                                <div class="extra-option">
-                                    <input type="checkbox" id="extra-led-color" name="extras" value="led-color" data-price="15">
-                                    <label for="extra-led-color" class="extra-label">
-                                        <span class="extra-name">LED de Color Variable</span>
-                                        <span class="extra-price">+15€</span>
-                                        <span class="extra-description">Control RGB de temperatura de color</span>
-                                    </label>
-                                </div>
+                            <div class="extras-grid">                                 
                                 
-                                <div class="extra-option">
-                                    <input type="checkbox" id="extra-dimmer" name="extras" value="dimmer" data-price="10">
-                                    <label for="extra-dimmer" class="extra-label">
-                                        <span class="extra-name">Regulador de Intensidad</span>
-                                        <span class="extra-price">+10€</span>
-                                        <span class="extra-description">Control de brillo ajustable</span>
-                                    </label>
-                                </div>
                                 
-                                <div class="extra-option">
-                                    <input type="checkbox" id="extra-marco" name="extras" value="marco" data-price="25">
-                                    <label for="extra-marco" class="extra-label">
-                                        <span class="extra-name">Marco Premium</span>
-                                        <span class="extra-price">+25€</span>
-                                        <span class="extra-description">Marco de madera artesanal</span>
-                                    </label>
-                                </div>
-                                
-                                <div class="extra-option">
-                                    <input type="checkbox" id="extra-grabado" name="extras" value="grabado" data-price="12">
-                                    <label for="extra-grabado" class="extra-label">
-                                        <span class="extra-name">Grabado Personalizado</span>
-                                        <span class="extra-price">+12€</span>
-                                        <span class="extra-description">Texto o fecha grabados</span>
-                                    </label>
-                                </div>
                                 
                                 <div class="extra-option">
                                     <input type="checkbox" id="extra-envio" name="extras" value="envio" data-price="8">
                                     <label for="extra-envio" class="extra-label">
                                         <span class="extra-name">Envío Express</span>
-                                        <span class="extra-price">+8€</span>
+                                        <span class="extra-price">+10€</span>
                                         <span class="extra-description">Entrega en 24-48h</span>
                                     </label>
                                 </div>
@@ -362,7 +362,7 @@
                         <ul>
                             <li>✅ Materiales premium</li>
                             <li>✅ Fabricación artesanal</li>
-                            <li>✅ Garantía de 2 años</li>
+                            <li>✅ Originalidad en cada diseño</li>
                             <li>✅ Satisfacción garantizada</li>
                         </ul>
                     </div>

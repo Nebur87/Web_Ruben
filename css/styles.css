@@ -160,7 +160,7 @@ a:hover {
 }
 
 .logo {
-  height: 40px;
+  height: 80px;
   width: auto;
 }
 
@@ -964,6 +964,57 @@ a:hover {
   color: var(--color-neutral-medium);
 }
 
+.product-discount {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-success);
+  margin-top: var(--spacing-xs);
+  padding: 2px 6px;
+  background-color: #e8f5e8;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* =============== CONFIGURACIÓN DE PRODUCTOS =============== */
+.discount-highlight {
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.images-requirement {
+  background-color: var(--color-accent);
+  padding: var(--spacing-md);
+  border-radius: 8px;
+  border-left: 4px solid var(--color-primary);
+}
+
+.requirement-text {
+  display: block;
+  color: var(--color-neutral-dark);
+  font-weight: 500;
+}
+
+.requirement-text strong {
+  color: var(--color-primary);
+}
+
+/* Configuraciones específicas ocultas por defecto */
+[id^="config-"] {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* =============== EXTRAS =============== */
 .extras-grid {
   display: grid;
@@ -1382,6 +1433,7 @@ a:hover {
 }
 
 .cta-content p {
+  color:white ;
   font-size: 1.125rem;
   margin-bottom: var(--spacing-xl);
   opacity: 0.9;

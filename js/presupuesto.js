@@ -7,6 +7,8 @@
 let presupuestoData = {
     contacto: {},
     producto: null,
+    cantidad: 1,
+    cantidadLitofanias: 2,
     plazo: 15,
     extras: [],
     precios: {
@@ -18,10 +20,30 @@ let presupuestoData = {
 };
 
 const PRODUCTOS = {
-    mesa: { precio: 45, nombre: 'Lámpara de Mesa' },
-    pared: { precio: 65, nombre: 'Lámpara de Pared' },
-    techo: { precio: 120, nombre: 'Lámpara de Techo' },
-    personalizada: { precio: 80, nombre: 'Diseño Personalizado' }
+    mesa: { precio: 45, nombre: 'Lámpara de Mesa', basePrice: 45 },
+    pared: { 
+        precio: 65, 
+        nombre: 'Lámpara de Pared',
+        basePrice: 65,
+        descuentoSegunda: 0.15,
+        precios: {
+            1: 65,
+            2: 120  // 65 + (65 * 0.85) = 65 + 55.25 = 120.25 ≈ 120
+        }
+    },
+    techo: { 
+        precio: 120, 
+        nombre: 'Lámpara de Techo',
+        basePrice: 50, // 50€ por litofanía
+        soportePrice: 50, // 50€ soporte fijo
+        precios: {
+            2: 150, // (2 * 50) + 50 = 150
+            3: 200, // (3 * 50) + 50 = 200
+            4: 250, // (4 * 50) + 50 = 250
+            5: 300  // (5 * 50) + 50 = 300
+        }
+    },
+    personalizada: { precio: 80, nombre: 'Diseño Personalizado', basePrice: 80 }
 };
 
 const EXTRAS = {
@@ -45,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initNavigation();
     initFormValidation();
     initProductSelection();
+    initProductConfiguration();
     initExtrasSelection();
     initPlazoCalculation();
     initPresupuestoDisplay();
@@ -191,6 +214,7 @@ function initProductSelection() {
                 
                 // Actualizar UI
                 updateProductSelection(this);
+                showProductConfiguration(this.value);
                 calcularPresupuesto();
                 
                 console.log(`📦 Producto seleccionado: ${PRODUCTOS[this.value].nombre}`);
@@ -207,6 +231,61 @@ function updateProductSelection(selectedRadio) {
     
     // Agregar clase activa a la opción seleccionada
     selectedRadio.closest('.product-option').classList.add('selected');
+}
+
+function showProductConfiguration(productType) {
+    // Ocultar todas las configuraciones
+    document.querySelectorAll('[id^="config-"]').forEach(config => {
+        config.style.display = 'none';
+    });
+    
+    // Mostrar configuración específica
+    const configElement = document.getElementById(`config-${productType}`);
+    if (configElement) {
+        configElement.style.display = 'block';
+        
+        // Resetear valores por defecto
+        if (productType === 'pared') {
+            presupuestoData.cantidad = 1;
+            document.getElementById('cantidad-pared').value = '1';
+        } else if (productType === 'techo') {
+            presupuestoData.cantidadLitofanias = 2;
+            document.getElementById('cantidad-litofanias').value = '2';
+            updateImagenesRequirement(2);
+        }
+    }
+}
+
+// =============== CONFIGURACIÓN DE PRODUCTOS ===============
+function initProductConfiguration() {
+    // Configuración lámpara de pared
+    const cantidadPared = document.getElementById('cantidad-pared');
+    if (cantidadPared) {
+        cantidadPared.addEventListener('change', function() {
+            presupuestoData.cantidad = parseInt(this.value);
+            calcularPresupuesto();
+        });
+    }
+    
+    // Configuración lámpara de techo
+    const cantidadLitofanias = document.getElementById('cantidad-litofanias');
+    if (cantidadLitofanias) {
+        cantidadLitofanias.addEventListener('change', function() {
+            presupuestoData.cantidadLitofanias = parseInt(this.value);
+            updateImagenesRequirement(presupuestoData.cantidadLitofanias);
+            calcularPresupuesto();
+        });
+    }
+}
+
+function updateImagenesRequirement(numLitofanias) {
+    const totalImagenes = numLitofanias * 2; // 2 imágenes por litofanía
+    
+    const totalElement = document.getElementById('total-imagenes');
+    const porLitofaniaElement = document.getElementById('imagenes-por-litofania');
+    
+    if (totalElement) totalElement.textContent = totalImagenes;
+    if (porLitofaniaElement) porLitofaniaElement.textContent = '2';
 }
 
 // =============== SELECCIÓN DE EXTRAS ===============
@@ -281,10 +360,26 @@ function initPresupuestoDisplay() {
 }
 
 function calcularPresupuesto() {
-    // Precio base del producto
+    // Precio base del producto según tipo y configuración
     let precioBase = 0;
+    
     if (presupuestoData.producto && PRODUCTOS[presupuestoData.producto]) {
-        precioBase = PRODUCTOS[presupuestoData.producto].precio;
+        const producto = PRODUCTOS[presupuestoData.producto];
+        
+        if (presupuestoData.producto === 'pared') {
+            // Lámpara de pared con descuento en la segunda unidad
+            if (presupuestoData.cantidad === 1) {
+                precioBase = producto.precios[1];
+            } else if (presupuestoData.cantidad === 2) {
+                precioBase = producto.precios[2];
+            }
+        } else if (presupuestoData.producto === 'techo') {
+            // Lámpara de techo con precio según número de litofanías
+            precioBase = producto.precios[presupuestoData.cantidadLitofanias] || producto.precio;
+        } else {
+            // Mesa y personalizada (precio fijo)
+            precioBase = producto.precio;
+        }
     }
     
     // Precio de extras
@@ -561,10 +656,17 @@ function resetForm() {
         presupuestoData = {
             contacto: {},
             producto: null,
+            cantidad: 1,
+            cantidadLitofanias: 2,
             plazo: 15,
             extras: [],
             precios: { base: 0, extras: 0, descuento: 0, total: 0 }
         };
+        
+        // Ocultar configuraciones específicas
+        document.querySelectorAll('[id^="config-"]').forEach(config => {
+            config.style.display = 'none';
+        });
         
         // Recalcular presupuesto
         calcularPresupuesto();
