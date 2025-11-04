@@ -1,21 +1,21 @@
 /**
  * LITOARTE - JavaScript para Página Principal
- * Funcionalidades: Navegación, carga de noticias, animaciones, interacciones
+ * Funcionalidades: Navegación, animaciones, interacciones
  */
-
-// =============== VARIABLES GLOBALES ===============
-let noticias = [];
-let noticiasMostradas = 3;
 
 // =============== INICIALIZACIÓN ===============
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🎨 LitoArte - Inicializando aplicación...');
     
     initNavigation();
-    loadNoticias();
     initScrollAnimations();
     initSmoothScroll();
     initHeaderEffects();
+    
+    // Inicializar sistema de reseñas si existe
+    if (typeof initResenas === 'function') {
+        initResenas();
+    }
     
     console.log('✅ LitoArte - Aplicación inicializada correctamente');
 });
@@ -75,236 +75,7 @@ function highlightActiveNavLink() {
     });
 }
 
-// =============== CARGA DE NOTICIAS ===============
-async function loadNoticias() {
-    const container = document.getElementById('noticias-container');
-    const verMasBtn = document.getElementById('ver-mas-noticias');
-    
-    if (!container) {
-        console.warn('Container de noticias no encontrado');
-        return;
-    }
-
-    try {
-        console.log('📰 Cargando noticias...');
-        
-        const response = await fetch('noticias.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        noticias = data.noticias || [];
-        
-        if (noticias.length === 0) {
-            mostrarMensajeNoNoticias(container);
-            return;
-        }
-
-        mostrarNoticias(container);
-        
-        // Configurar botón "Ver más"
-        if (verMasBtn) {
-            verMasBtn.addEventListener('click', function() {
-                noticiasMostradas += 3;
-                mostrarNoticias(container);
-                
-                if (noticiasMostradas >= noticias.length) {
-                    verMasBtn.style.display = 'none';
-                }
-            });
-            
-            // Ocultar botón si no hay más noticias para mostrar
-            if (noticias.length <= noticiasMostradas) {
-                verMasBtn.style.display = 'none';
-            }
-        }
-        
-        console.log(`✅ ${noticias.length} noticias cargadas correctamente`);
-        
-    } catch (error) {
-        console.error('❌ Error al cargar noticias:', error);
-        mostrarErrorNoticias(container);
-    }
-}
-
-function mostrarNoticias(container) {
-    // Limpiar container pero mantener el loading
-    const loadingEl = container.querySelector('.loading');
-    container.innerHTML = '';
-    
-    const noticiasAMostrar = noticias.slice(0, noticiasMostradas);
-    
-    noticiasAMostrar.forEach((noticia, index) => {
-        const noticiaEl = createNoticiaElement(noticia, index);
-        container.appendChild(noticiaEl);
-    });
-    
-    // Animar aparición de las nuevas noticias
-    const nuevasNoticias = container.querySelectorAll('.noticia-card:not(.animated)');
-    nuevasNoticias.forEach((card, index) => {
-        card.classList.add('animated');
-        setTimeout(() => {
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 100);
-    });
-}
-
-function createNoticiaElement(noticia, index) {
-    const article = document.createElement('article');
-    article.className = 'noticia-card';
-    article.style.opacity = '0';
-    article.style.transform = 'translateY(20px)';
-    article.style.transition = 'all 0.6s ease-out';
-    
-    // Imagen por defecto si no existe
-    const imagenSrc = noticia.imagen || 'assets/img/noticia-default.jpg';
-    
-    article.innerHTML = `
-        <div class="noticia-image">
-            <img src="${imagenSrc}" alt="${noticia.titulo}" loading="lazy" 
-                 onerror="this.src='assets/img/noticia-default.jpg'">
-        </div>
-        <div class="noticia-content">
-            <div class="noticia-fecha">${formatearFecha(noticia.fecha)}</div>
-            <h3 class="noticia-titulo">${noticia.titulo}</h3>
-            <p class="noticia-resumen">${noticia.resumen}</p>
-            <button class="btn btn-outline" onclick="mostrarNoticiaCompleta(${noticia.id})">
-                Leer más
-            </button>
-        </div>
-    `;
-    
-    return article;
-}
-
-function mostrarMensajeNoNoticias(container) {
-    container.innerHTML = `
-        <div class="no-noticias">
-            <p>📰 No hay noticias disponibles en este momento.</p>
-            <p>¡Vuelve pronto para conocer nuestras novedades!</p>
-        </div>
-    `;
-}
-
-function mostrarErrorNoticias(container) {
-    container.innerHTML = `
-        <div class="error-noticias">
-            <p>❌ Error al cargar las noticias.</p>
-            <button class="btn btn-secondary" onclick="loadNoticias()">
-                Intentar de nuevo
-            </button>
-        </div>
-    `;
-}
-
-function formatearFecha(fechaStr) {
-    try {
-        // Si la fecha viene como string "28 octubre 2025"
-        if (typeof fechaStr === 'string' && !fechaStr.includes('-')) {
-            return fechaStr;
-        }
-        
-        const fecha = new Date(fechaStr);
-        if (isNaN(fecha)) {
-            return fechaStr; // Devolver la fecha original si no se puede parsear
-        }
-        
-        return fecha.toLocaleDateString('es-ES', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    } catch (error) {
-        console.warn('Error al formatear fecha:', error);
-        return fechaStr;
-    }
-}
-
-// =============== MODAL DE NOTICIA COMPLETA ===============
-function mostrarNoticiaCompleta(noticiaId) {
-    const noticia = noticias.find(n => n.id === noticiaId);
-    if (!noticia) {
-        console.error('Noticia no encontrada:', noticiaId);
-        return;
-    }
-    
-    // Crear modal
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <button class="modal-close" onclick="cerrarModal(this)">&times;</button>
-            <div class="modal-header">
-                <h2>${noticia.titulo}</h2>
-                <div class="noticia-fecha">${formatearFecha(noticia.fecha)}</div>
-            </div>
-            <div class="modal-body">
-                ${noticia.imagen ? `<img src="${noticia.imagen}" alt="${noticia.titulo}" class="noticia-imagen-completa">` : ''}
-                <p class="noticia-contenido-completo">${noticia.contenido}</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" onclick="cerrarModal(this)">Cerrar</button>
-                <a href="views/contacto.html" class="btn btn-secondary">Contactar</a>
-            </div>
-        </div>
-    `;
-    
-    // Estilos del modal
-    modal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 2000;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        padding: 20px;
-        box-sizing: border-box;
-    `;
-    
-    const modalContent = modal.querySelector('.modal-content');
-    modalContent.style.cssText = `
-        background: white;
-        border-radius: 12px;
-        max-width: 600px;
-        max-height: 80vh;
-        overflow-y: auto;
-        position: relative;
-        transform: scale(0.9);
-        transition: transform 0.3s ease;
-    `;
-    
-    // Agregar al DOM y animar
-    document.body.appendChild(modal);
-    document.body.style.overflow = 'hidden';
-    
-    requestAnimationFrame(() => {
-        modal.style.opacity = '1';
-        modalContent.style.transform = 'scale(1)';
-    });
-}
-
-function cerrarModal(button) {
-    const modal = button.closest('.modal-overlay');
-    if (modal) {
-        modal.style.opacity = '0';
-        modal.querySelector('.modal-content').style.transform = 'scale(0.9)';
-        
-        setTimeout(() => {
-            document.body.removeChild(modal);
-            document.body.style.overflow = '';
-        }, 300);
-    }
-}
-
-// =============== EFECTOS DE SCROLL ===============
+// =============== ANIMACIONES AL SCROLL ===============
 function initScrollAnimations() {
     const observerOptions = {
         threshold: 0.1,
@@ -321,7 +92,7 @@ function initScrollAnimations() {
     }, observerOptions);
 
     // Observar elementos animables
-    const animatableElements = document.querySelectorAll('.producto-card, .caracteristica, .info-card');
+    const animatableElements = document.querySelectorAll('.producto-card, .caracteristica, .testimonio-card');
     animatableElements.forEach(el => {
         observer.observe(el);
     });
@@ -439,14 +210,9 @@ function showToast(message, type = 'info') {
 window.addEventListener('error', function(e) {
     console.error('Error global:', e.error);
     // No mostrar toast para errores de imágenes
-    if (!e.filename.includes('.jpg') && !e.filename.includes('.png')) {
+    if (e.filename && !e.filename.includes('.jpg') && !e.filename.includes('.png') && !e.filename.includes('.svg')) {
         showToast('Ha ocurrido un error. Por favor, recarga la página.', 'error');
     }
 });
-
-// =============== EXPORTAR FUNCIONES GLOBALES ===============
-window.mostrarNoticiaCompleta = mostrarNoticiaCompleta;
-window.cerrarModal = cerrarModal;
-window.loadNoticias = loadNoticias;
 
 console.log('📄 index.js cargado correctamente');

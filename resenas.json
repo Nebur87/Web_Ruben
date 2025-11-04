@@ -1,0 +1,115 @@
+{
+  "estadisticas": {
+    "totalResenas": 470,
+    "puntuacionMedia": 4.8,
+    "distribucion": {
+      "5": 380,
+      "4": 65,
+      "3": 18,
+      "2": 5,
+      "1": 2
+    }
+  },
+  "resenas": [
+    {
+      "id": 1,
+      "nombre": "Klaus Müller",
+      "pais": "Alemania",
+      "idioma": "de",
+      "puntuacion": 5,
+      "fecha": "2025-11-01",
+      "texto": "Absolut fantastisch! Die Qualität der Lithophanie ist erstklassig. Sehr zufrieden mit dem Kauf.",
+      "verificado": true
+    },
+    {
+      "id": 2,
+      "nombre": "Marie Dubois",
+      "pais": "Francia",
+      "idioma": "fr",
+      "puntuacion": 5,
+      "fecha": "2025-10-28",
+      "texto": "Magnifique travail artisanal. La lumière LED est parfaite et l'impression 3D impeccable. Je recommande vivement!",
+      "verificado": true
+    },
+    {
+      "id": 3,
+      "nombre": "Marco Rossi",
+      "pais": "Italia",
+      "idioma": "it",
+      "puntuacion": 5,
+      "fecha": "2025-10-25",
+      "texto": "Semplicemente perfetto! La lampada è arrivata ben imballata e la qualità supera le aspettative. Bellissima!",
+      "verificado": true
+    },
+    {
+      "id": 4,
+      "nombre": "Hans Weber",
+      "pais": "Suiza",
+      "idioma": "de",
+      "puntuacion": 5,
+      "fecha": "2025-10-22",
+      "texto": "Hervorragende Schweizer Qualität! Sehr schnelle Lieferung und professioneller Service. Danke!",
+      "verificado": true
+    },
+    {
+      "id": 5,
+      "nombre": "Ana Silva",
+      "pais": "Portugal",
+      "idioma": "pt",
+      "puntuacion": 5,
+      "fecha": "2025-10-20",
+      "texto": "Produto excepcional! A litofania ficou linda com as fotos da minha família. Recomendo muito!",
+      "verificado": true
+    },
+    {
+      "id": 6,
+      "nombre": "Carlos Martínez",
+      "pais": "España",
+      "idioma": "es",
+      "puntuacion": 5,
+      "fecha": "2025-10-18",
+      "texto": "Trabajo impecable. La atención al detalle es increíble y el resultado final superó mis expectativas.",
+      "verificado": true
+    },
+    {
+      "id": 7,
+      "nombre": "Sophie Laurent",
+      "pais": "Francia",
+      "idioma": "fr",
+      "puntuacion": 5,
+      "fecha": "2025-10-15",
+      "texto": "Service client exceptionnel. La lampe est magnifique et fait un cadeau parfait!",
+      "verificado": true
+    },
+    {
+      "id": 8,
+      "nombre": "Giuseppe Ferrara",
+      "pais": "Italia",
+      "idioma": "it",
+      "puntuacion": 4,
+      "fecha": "2025-10-12",
+      "texto": "Molto bene, la qualità è ottima. L'unico piccolo difetto è che la consegna ha richiesto più tempo del previsto.",
+      "verificado": true
+    },
+    {
+      "id": 9,
+      "nombre": "Petra Schmidt",
+      "pais": "Alemania",
+      "idioma": "de",
+      "puntuacion": 5,
+      "fecha": "2025-10-10",
+      "texto": "Wunderschöne Arbeit! Die Lithophanie ist ein echtes Kunstwerk. Meine Familie war begeistert!",
+      "verificado": true
+    },
+    {
+      "id": 10,
+      "nombre": "João Costa",
+      "pais": "Portugal",
+      "idioma": "pt",
+      "puntuacion": 5,
+      "fecha": "2025-10-08",
+      "texto": "Excelente qualidade e acabamento perfeito. A tecnologia LED funciona muito bem. Muito satisfeito!",
+      "verificado": true
+    }
+  ]
+}

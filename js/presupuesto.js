@@ -50,14 +50,12 @@ const EXTRAS = {
     'embalaje': { precio: 5, nombre: 'Embalaje de Regalo' }
 };
 
-const DESCUENTOS = {
-    15: 0.05,  // 5% descuento para 15-30 días
-    31: 0.10   // 10% descuento para 31-60 días
-};
+// Sistema de descuentos eliminado
 
 // =============== INICIALIZACIÓN ===============
 document.addEventListener('DOMContentLoaded', function() {
     console.log('💰 Presupuesto - Inicializando...');
+
     
     initNavigation();
     initFormValidation();
@@ -576,28 +574,15 @@ function calcularPresupuesto() {
         }
     });
     
-    // Subtotal
-    const subtotal = precioBase + precioExtras;
-    
-    // Calcular descuento por plazo
-    let descuento = 0;
-    const plazo = presupuestoData.plazo;
-    
-    if (plazo >= 31) {
-        descuento = subtotal * DESCUENTOS[31];
-    } else if (plazo >= 15) {
-        descuento = subtotal * DESCUENTOS[15];
-    }
-    
-    // Total final
-    const total = subtotal - descuento;
+    // Subtotal y total (sin descuentos)
+    const total = precioBase + precioExtras;
     
     // Actualizar datos
     presupuestoData.precios = {
         base: precioBase,
         extras: precioExtras,
-        subtotal: subtotal,
-        descuento: descuento,
+        subtotal: total,
+        descuento: 0,
         total: total
     };
     
@@ -635,15 +620,33 @@ function updatePresupuestoDisplay() {
 // =============== ENVÍO DEL FORMULARIO ===============
 function initFormSubmission() {
     const form = document.getElementById('presupuesto-form');
-    if (!form) return;
+    if (!form) {
+        console.error('❌ No se encontró el formulario presupuesto-form');
+        return;
+    }
     
+    // Asignar evento al botón directamente
+    const submitBtn = document.getElementById('submit-btn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('🚀 BOTÓN CLICKEADO');
+            handleSubmit();
+        });
+        console.log('✅ Listener de click asignado al botón submit-btn');
+    } else {
+        console.error('❌ No se encontró el botón submit-btn');
+    }
+    
+    // También listener en el form por si acaso
     form.addEventListener('submit', function(e) {
+        console.log('🚀 SUBMIT EVENT CAPTURADO');
         e.preventDefault();
-        
-        if (validateCompleteForm()) {
-            submitPresupuesto();
-        }
+        console.log('🛑 preventDefault() ejecutado');
+        handleSubmit();
     });
+    
+    console.log('✅ Listener de submit registrado en el formulario');
     
     // Reset del formulario
     const resetBtn = form.querySelector('button[type="reset"]');
@@ -700,14 +703,14 @@ function validateCompleteForm() {
         showFieldError('condiciones', 'Debe aceptar las condiciones de privacidad');
     }
     
-    // Validar fotos requeridas
-    if (typeof window.__validateFotos === 'function') {
-        const okFotos = window.__validateFotos(true);
-        if (!okFotos) {
-            isValid = false;
-            errors.push('Debes subir las fotos requeridas con formato válido');
-        }
-    }
+    // Validar fotos requeridas (OPCIONAL - comentado para pruebas)
+    // if (typeof window.__validateFotos === 'function') {
+    //     const okFotos = window.__validateFotos(true);
+    //     if (!okFotos) {
+    //         isValid = false;
+    //         errors.push('Debes subir las fotos requeridas con formato válido');
+    //     }
+    // }
     
     if (!isValid) {
         showToast('Por favor, corrija los errores del formulario', 'error');
@@ -730,7 +733,19 @@ function showFieldError(fieldId, message) {
     }
 }
 
-async function submitPresupuesto() {
+// ==================== MANEJO DE ENVÍO ====================
+window.handleSubmit = function() {
+    console.log('🚀 handleSubmit() llamado');
+    if (validateCompleteForm()) {
+        console.log('✅ Validación OK - Ejecutando submitPresupuesto()');
+        submitPresupuesto();
+    } else {
+        console.log('❌ Validación FALLÓ');
+    }
+}
+
+// ==================== ENVÍO DE FORMULARIO ====================
+window.submitPresupuesto = async function submitPresupuesto() {
     // Recopilar datos del formulario
     const formData = {
         contacto: {
@@ -757,44 +772,65 @@ async function submitPresupuesto() {
     
     console.log('📤 Procesando pedido:', formData);
     
-    const submitBtn = document.querySelector('button[type="submit"]');
+    const submitBtn = document.getElementById('submit-btn');
     const originalText = submitBtn.textContent;
     
     submitBtn.disabled = true;
     submitBtn.textContent = 'Procesando...';
     
     try {
-        // Verificar que el cliente API esté disponible
-        if (typeof window.APIClient === 'undefined') {
-            throw new Error('Cliente API no disponible. Verifica que api-client.js esté cargado.');
+        // Flujo V2 (Opción B): No hay pedido hasta pagar
+        console.log('�️ Subiendo fotos temporalmente...');
+
+        // Validar fotos requeridas
+        if (typeof window.__validateFotos === 'function') {
+            const okFotos = window.__validateFotos(true);
+            if (!okFotos) {
+                throw new Error('Debes subir las fotos requeridas con formato válido.');
+            }
         }
 
-        // 1. Crear pedido en el servidor
-        console.log('📝 Creando pedido en el servidor...');
-        const pedidoResponse = await window.APIClient.crearPedido(formData);
-        const numeroPedido = pedidoResponse.numeroPedido;
-        
-        console.log(`✅ Pedido creado: ${numeroPedido}`);
-        
-        // 2. Crear sesión de pago de Stripe
-        console.log('💳 Creando sesión de pago...');
-        const sessionResponse = await window.APIClient.crearSessionPago(numeroPedido);
-        
-        console.log(`✅ Sesión de pago creada: ${sessionResponse.sessionId}`);
-        
-        // 3. Redirigir a Stripe Checkout
-        console.log('🔄 Redirigiendo a pasarela de pago...');
+        // Reunir archivos de todas las entradas 'fotos[]'
+        const inputs = document.querySelectorAll('input[name="fotos[]"]');
+        const fd = new FormData();
+        let archivos = 0;
+        inputs.forEach(inp => {
+            if (inp.files && inp.files[0]) {
+                fd.append('fotos[]', inp.files[0]);
+                archivos++;
+            }
+        });
+
+        if (archivos === 0) {
+            throw new Error('Debes adjuntar las fotos requeridas.');
+        }
+
+        const uploadResp = await window.APIClient.subirFotosTemporales(fd);
+        if (!uploadResp?.success) {
+            throw new Error('No se pudieron subir las fotos.');
+        }
+
+        const tempToken = uploadResp.token;
+        console.log('✅ Fotos subidas. token:', tempToken, 'archivos:', uploadResp.files?.length || 0);
+
+        // Crear sesión de pago usando el payload y el token temporal
+        console.log('💳 Creando sesión de pago (v2)...');
+        const sessionResponse = await window.APIClient.crearSessionPagoV2(formData, tempToken);
+
+        console.log('✅ Sesión de pago creada:', sessionResponse.sessionId);
+        console.log('🔗 URL de redirección:', sessionResponse.url);
+
+        // Redirigir a Stripe Checkout
+        console.log('🔄 Redirigiendo a Stripe Checkout...');
         window.APIClient.redirigirAPago(sessionResponse.url);
-        
-        // El código aquí no se ejecutará porque se redirige a Stripe
-        
+
     } catch (error) {
         console.error('❌ Error al procesar el pedido:', error);
+        console.error('❌ Detalles del error:', error.message);
+        console.error('❌ Stack:', error.stack);
         
-        // Mostrar error al usuario
-        mostrarErrorPago(error.message);
+        alert('❌ No se pudo iniciar el pago.\n\nDetalle: ' + (error?.message || 'Error desconocido'));
         
-        // Restaurar botón
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
     }

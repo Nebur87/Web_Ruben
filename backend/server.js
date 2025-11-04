@@ -7,10 +7,21 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
 
 const db = require('./database');
 const emailService = require('./emailService');
+
+// Inicializar Stripe solo si hay clave configurada
+let stripe;
+if (process.env.STRIPE_SECRET_KEY) {
+    stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+} else {
+    console.warn('⚠️  STRIPE_SECRET_KEY no configurada - pagos deshabilitados');
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +34,57 @@ app.use(bodyParser.json());
 db.initDatabase();
 
 console.log('🚀 Servidor LitoArte iniciando...');
+// ==================== SUBIDAS TEMPORALES DE FOTOS ====================
+
+// Carpeta de uploads
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
+if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+const TEMP_DIR = path.join(UPLOADS_DIR, 'temp');
+if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        // cada petición usa su subcarpeta según token
+        let token = req.body.token;
+        if (!token) {
+            token = uuidv4();
+            req.body.token = token;
+        }
+        const dir = path.join(TEMP_DIR, token);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        cb(null, dir);
+    },
+    filename: function (req, file, cb) {
+        const ts = Date.now();
+        const safe = (file.originalname || 'foto').replace(/[^a-zA-Z0-9._-]/g, '_');
+        cb(null, `${ts}_${safe}`);
+    }
+});
+
+const upload = multer({ storage });
+
+/**
+ * POST /api/uploads/temp - Subir fotos temporalmente
+ * campo: fotos[]
+ * respuesta: { success, token, files:[{filename, pathRel}] }
+ */
+app.post('/api/uploads/temp', upload.array('fotos[]', 10), (req, res) => {
+    try {
+        const token = req.body.token || uuidv4();
+        const files = (req.files || []).map(f => ({
+            filename: f.filename,
+            pathRel: path.join('uploads', 'temp', token, f.filename).replace(/\\/g, '/'),
+            mime: f.mimetype,
+            size: f.size
+        }));
+
+        res.json({ success: true, token, files });
+    } catch (error) {
+        console.error('❌ Error en subida temporal:', error);
+        res.status(500).json({ error: 'Error al subir fotos' });
+    }
+});
+
 
 // ==================== UTILIDADES ====================
 
@@ -164,20 +226,6 @@ app.post('/api/pagos/crear-session', async (req, res) => {
             });
         }
 
-        // Descuento (si existe)
-        if (parseFloat(pedido.precio_descuento) > 0) {
-            lineItems.push({
-                price_data: {
-                    currency: 'eur',
-                    product_data: {
-                        name: 'Descuento por plazo de entrega',
-                    },
-                    unit_amount: -Math.round(parseFloat(pedido.precio_descuento) * 100),
-                },
-                quantity: 1,
-            });
-        }
-
         // Crear sesión de Stripe Checkout
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -210,6 +258,73 @@ app.post('/api/pagos/crear-session', async (req, res) => {
             error: 'Error al crear sesión de pago',
             details: error.message 
         });
+    }
+});
+
+/**
+ * POST /api/pagos/crear-session-v2 - Crear sesión de pago SIN pedido previo
+ * Body: { payload: { contacto, producto, cantidad, cantidadLitofanias, plazo, extras[], precios }, tempToken }
+ * Guarda payload en carpeta temp/<token>/order.json y crea sesión con metadata { temp_token }
+ */
+app.post('/api/pagos/crear-session-v2', async (req, res) => {
+    try {
+        const { payload, tempToken } = req.body;
+        if (!payload || !payload.producto || !payload.precios) {
+            return res.status(400).json({ error: 'Datos de pedido incompletos' });
+        }
+        const token = tempToken || uuidv4();
+        const dir = path.join(TEMP_DIR, token);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(path.join(dir, 'order.json'), JSON.stringify(payload, null, 2), 'utf8');
+
+        // Construir line_items desde payload
+        const lineItems = [];
+        // Producto base
+        lineItems.push({
+            price_data: {
+                currency: 'eur',
+                product_data: {
+                    name: payload.producto.nombre,
+                    description: `Plazo: ${payload.plazo} días`
+                },
+                unit_amount: Math.round(parseFloat(payload.precios.base) * 100)
+            },
+            quantity: 1
+        });
+        // Extras
+        if (Array.isArray(payload.extras)) {
+            payload.extras.forEach(ex => {
+                const p = Number(ex.precio || 0);
+                if (p > 0) {
+                    lineItems.push({
+                        price_data: {
+                            currency: 'eur',
+                            product_data: { name: ex.nombre },
+                            unit_amount: Math.round(p * 100)
+                        },
+                        quantity: 1
+                    });
+                }
+            });
+        }
+
+        const successUrl = `${process.env.SUCCESS_URL}?session_id={CHECKOUT_SESSION_ID}`;
+        const cancelUrl = `${process.env.CANCEL_URL}?cancelado=true`;
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: lineItems,
+            mode: 'payment',
+            success_url: successUrl,
+            cancel_url: cancelUrl,
+            customer_email: payload?.contacto?.email,
+            metadata: { temp_token: token }
+        });
+
+        res.json({ success: true, sessionId: session.id, url: session.url, tempToken: token });
+    } catch (error) {
+        console.error('❌ Error crear-session-v2:', error);
+        res.status(500).json({ error: 'Error al crear sesión de pago', details: error.message });
     }
 });
 
@@ -336,6 +451,136 @@ app.post('/api/pedidos/:numeroPedido/enviar-emails', async (req, res) => {
 });
 
 /**
+ * POST /api/pedidos/:numeroPedido/confirmar-pago - Confirmar pago exitoso
+ * Verifica el estado de la sesión de Stripe si se proporciona session_id
+ */
+app.post('/api/pedidos/:numeroPedido/confirmar-pago', async (req, res) => {
+    try {
+        const { numeroPedido } = req.params;
+        const { session_id } = req.query;
+
+        const pedido = db.obtenerPedido(numeroPedido);
+
+        if (!pedido) {
+            return res.status(404).json({ error: 'Pedido no encontrado' });
+        }
+
+        // Si hay session_id, verificar con Stripe que el pago está realizado
+        if (session_id) {
+            const session = await stripe.checkout.sessions.retrieve(session_id);
+            if (session.payment_status !== 'paid') {
+                return res.status(400).json({ error: 'El pago no está confirmado aún' });
+            }
+
+            // Marcar como pagado con payment_intent
+            db.marcarComoPagado(numeroPedido, session.payment_intent);
+        } else {
+            // Sin verificación (fallback) - marcar como pagado sin payment_intent
+            db.marcarComoPagado(numeroPedido, pedido.stripe_payment_intent || null);
+        }
+
+        console.log(`✅ Pago confirmado para pedido ${numeroPedido}`);
+
+        res.json({
+            success: true,
+            message: 'Pago confirmado correctamente'
+        });
+
+    } catch (error) {
+        console.error('❌ Error al confirmar pago:', error);
+        res.status(500).json({ 
+            error: 'Error al confirmar pago',
+            details: error.message 
+        });
+    }
+});
+
+/**
+ * POST /api/pagos/confirmar - Confirmar pago con session_id (flujo v2)
+ * Crea el pedido en BD, mueve fotos desde temp a carpeta final, envía emails.
+ */
+app.post('/api/pagos/confirmar', async (req, res) => {
+    try {
+        const { session_id } = req.query;
+        if (!session_id) return res.status(400).json({ error: 'session_id requerido' });
+
+        const session = await stripe.checkout.sessions.retrieve(session_id);
+        if (!session || session.payment_status !== 'paid') {
+            return res.status(400).json({ error: 'El pago no está confirmado' });
+        }
+
+        const tempToken = session.metadata?.temp_token;
+        if (!tempToken) return res.status(400).json({ error: 'Falta temp_token en metadata' });
+
+        const dir = path.join(TEMP_DIR, tempToken);
+        const payloadPath = path.join(dir, 'order.json');
+        if (!fs.existsSync(payloadPath)) return res.status(404).json({ error: 'Payload temporal no encontrado' });
+        const payload = JSON.parse(fs.readFileSync(payloadPath, 'utf8'));
+
+        // Generar número de pedido y calcular importes del payload
+        const numeroPedido = generarNumeroPedido();
+        const precio_base = Number(payload.precios?.base || 0);
+        const precio_extras = Number(payload.precios?.extras || 0);
+        const precio_total = Number(payload.precios?.total || (precio_base + precio_extras));
+
+        // Crear pedido en BD como pagado
+        const pedidoData = {
+            numero_pedido: numeroPedido,
+            cliente_nombre: payload.contacto?.nombre,
+            cliente_apellidos: payload.contacto?.apellidos,
+            cliente_email: payload.contacto?.email,
+            cliente_telefono: payload.contacto?.telefono,
+            producto_tipo: payload.producto?.tipo,
+            producto_nombre: payload.producto?.nombre,
+            cantidad: payload.cantidad || 1,
+            cantidad_litofanias: payload.cantidadLitofanias || null,
+            plazo_entrega: payload.plazo,
+            precio_base,
+            precio_extras,
+            precio_descuento: 0,
+            precio_total,
+            estado: 'pago_confirmado',
+            newsletter: payload.newsletter ? 1 : 0,
+            extras: Array.isArray(payload.extras) ? payload.extras : []
+        };
+        const pedidoId = db.crearPedido(pedidoData);
+        db.marcarComoPagado(numeroPedido, session.payment_intent);
+
+        // Insertar extras
+        if (Array.isArray(payload.extras) && payload.extras.length > 0) {
+            // ya los inserta crearPedido; si no, podríamos insertar aquí
+        }
+
+        // Mover fotos a carpeta final del pedido
+        const finalDir = path.join(UPLOADS_DIR, 'pedidos', numeroPedido);
+        if (!fs.existsSync(finalDir)) fs.mkdirSync(finalDir, { recursive: true });
+        let attachments = [];
+        if (fs.existsSync(dir)) {
+            const files = fs.readdirSync(dir);
+            files.forEach(fname => {
+                if (fname === 'order.json') return;
+                const src = path.join(dir, fname);
+                const dst = path.join(finalDir, fname);
+                fs.renameSync(src, dst);
+                attachments.push({ filename: fname, path: dst });
+            });
+        }
+
+        // Enviar emails (adjuntar fotos solo a empresa)
+        const pedido = db.obtenerPedido(numeroPedido);
+        await emailService.enviarEmailsConfirmacion(pedido, { empresaAdjuntos: attachments });
+
+        // Limpiar carpeta temporal
+        try { fs.rmSync(dir, { recursive: true, force: true }); } catch {}
+
+        res.json({ success: true, numeroPedido, pedido });
+    } catch (error) {
+        console.error('❌ Error al confirmar pago (v2):', error);
+        res.status(500).json({ error: 'Error al confirmar pago', details: error.message });
+    }
+});
+
+/**
  * GET /api/pedidos/:numeroPedido/historial - Obtener historial de un pedido
  */
 app.get('/api/pedidos/:numeroPedido/historial', (req, res) => {
@@ -432,5 +677,9 @@ app.post('/webhook/stripe',
 app.listen(PORT, () => {
     console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
     console.log(`📊 Estadísticas disponibles en http://localhost:${PORT}/api/estadisticas`);
-    console.log(`💳 Stripe configurado con clave: ${process.env.STRIPE_SECRET_KEY.substring(0, 10)}...`);
+    if (process.env.STRIPE_SECRET_KEY) {
+        console.log(`💳 Stripe configurado con clave: ${process.env.STRIPE_SECRET_KEY.substring(0, 10)}...`);
+    } else {
+        console.log(`⚠️  Stripe NO configurado - verifica tu archivo .env`);
+    }
 });

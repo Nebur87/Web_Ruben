@@ -6,65 +6,51 @@
 const API_URL = 'http://localhost:3000/api';
 
 /**
- * Procesar confirmación de pago exitoso
+ * Procesar confirmación de pago exitoso (flujo V2 por session_id)
  */
+let __confirmInFlight = false;
 async function procesarConfirmacion() {
+    if (__confirmInFlight) return;
+    __confirmInFlight = true;
     try {
         // Obtener parámetros de la URL
         const urlParams = new URLSearchParams(window.location.search);
-        const numeroPedido = urlParams.get('pedido');
         const sessionId = urlParams.get('session_id');
 
-        if (!numeroPedido) {
-            throw new Error('No se encontró número de pedido');
+        if (!sessionId) {
+            throw new Error('No se encontró session_id');
         }
 
-        console.log('📦 Procesando confirmación para pedido:', numeroPedido);
+        console.log('📦 Confirmando pago con session_id:', sessionId);
 
-        // Obtener datos del pedido del servidor
-        const response = await fetch(`${API_URL}/pedidos/${numeroPedido}`);
-        
-        if (!response.ok) {
-            throw new Error('Error al obtener datos del pedido');
+        // Confirmar pago y crear pedido en servidor (v2)
+        const confirmResponse = await fetch(`${API_URL}/pagos/confirmar?session_id=${encodeURIComponent(sessionId)}`, {
+            method: 'POST'
+        });
+
+        if (!confirmResponse.ok) {
+            const err = await confirmResponse.json().catch(() => ({}));
+            throw new Error(err.error || 'Error al confirmar pago');
         }
 
-        const data = await response.json();
-        const pedido = data.pedido;
+        const confirmData = await confirmResponse.json();
+        const pedido = confirmData.pedido;
 
-        console.log('📦 Pedido recuperado:', pedido);
+        console.log('✅ Pago confirmado. Pedido creado:', confirmData.numeroPedido);
 
         // Mostrar detalles del pedido
         mostrarDetallesPedido(pedido);
 
-        // Enviar emails de confirmación
+        // Mostrar estado de email como informativo (el backend ya los envía)
         const emailStatus = document.getElementById('email-status');
-        emailStatus.innerHTML = '<div class="loading-spinner" style="width: 30px; height: 30px;"></div><p>Enviando confirmaciones por email...</p>';
-
-        const emailResponse = await fetch(`${API_URL}/pedidos/${numeroPedido}/enviar-emails`, {
-            method: 'POST'
-        });
-
-        const emailData = await emailResponse.json();
-
-        // Mostrar resultado del envío de emails
-        if (emailData.success) {
-            emailStatus.className = 'email-status';
-            emailStatus.innerHTML = `
-                <strong>✅ Confirmación enviada</strong>
-                <p>Hemos enviado un email de confirmación a: <strong>${pedido.cliente_email}</strong></p>
-                <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
-                    Revisa tu bandeja de entrada y spam. Si no recibes el email en unos minutos, contacta con nosotros.
-                </p>
-            `;
-        } else {
-            emailStatus.className = 'email-status error';
-            emailStatus.innerHTML = `
-                <strong>⚠️ Error al enviar emails</strong>
-                <p>Tu pedido se procesó correctamente, pero hubo un problema al enviar la confirmación.</p>
-                <p>Número de pedido: <strong>${pedido.numero_pedido}</strong></p>
-                <p style="font-size: 0.9rem;">Por favor, guarda este número y contacta con nosotros.</p>
-            `;
-        }
+        emailStatus.className = 'email-status';
+        emailStatus.innerHTML = `
+            <strong>✅ Confirmación enviada</strong>
+            <p>Hemos enviado un email de confirmación a: <strong>${pedido.cliente_email}</strong></p>
+            <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+                Revisa tu bandeja de entrada y spam. Si no recibes el email en unos minutos, contacta con nosotros.
+            </p>
+        `;
 
         // Mostrar sección de éxito
         document.getElementById('loading-section').style.display = 'none';
@@ -76,6 +62,8 @@ async function procesarConfirmacion() {
         // Mostrar sección de error
         document.getElementById('loading-section').style.display = 'none';
         document.getElementById('error-section').style.display = 'block';
+    } finally {
+        __confirmInFlight = false;
     }
 }
 
@@ -141,15 +129,15 @@ function mostrarDetallesPedido(pedido) {
 
 // Ejecutar al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
-    // Verificar si venimos de Stripe con parámetro de pedido
+    // Verificar si venimos de Stripe con session_id
     const urlParams = new URLSearchParams(window.location.search);
-    const numeroPedido = urlParams.get('pedido');
+    const sessionId = urlParams.get('session_id');
 
-    if (numeroPedido) {
-        console.log('✅ Confirmación de pago para pedido:', numeroPedido);
+    if (sessionId) {
+        console.log('✅ Confirmación de pago con session_id:', sessionId);
         procesarConfirmacion();
     } else {
-        // No hay número de pedido, mostrar error
+        // No hay session_id, mostrar error
         document.getElementById('loading-section').style.display = 'none';
         document.getElementById('error-section').style.display = 'block';
     }

@@ -16,6 +16,9 @@ function crearTransporter() {
         auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
+        },
+        tls: {
+            rejectUnauthorized: false  // Solo para desarrollo
         }
     });
 }
@@ -297,14 +300,15 @@ async function enviarEmailCliente(pedido) {
 /**
  * Enviar email de notificación a la empresa
  */
-async function enviarEmailEmpresa(pedido) {
+async function enviarEmailEmpresa(pedido, opciones = {}) {
     const transporter = crearTransporter();
 
     const mailOptions = {
         from: `"Sistema LitoArte" <${process.env.EMAIL_USER}>`,
         to: process.env.EMPRESA_EMAIL,
         subject: `🔔 NUEVO PEDIDO: ${pedido.numero_pedido} - ${parseFloat(pedido.precio_total).toFixed(2)}€`,
-        html: generarHTMLEmpresa(pedido)
+        html: generarHTMLEmpresa(pedido),
+        attachments: Array.isArray(opciones.empresaAdjuntos) ? opciones.empresaAdjuntos : undefined
     };
 
     try {
@@ -320,7 +324,7 @@ async function enviarEmailEmpresa(pedido) {
 /**
  * Enviar ambos emails (cliente y empresa)
  */
-async function enviarEmailsConfirmacion(pedido) {
+async function enviarEmailsConfirmacion(pedido, opciones = {}) {
     const resultados = {
         cliente: null,
         empresa: null,
@@ -336,9 +340,9 @@ async function enviarEmailsConfirmacion(pedido) {
             resultados.errores.push({ tipo: 'cliente', mensaje: error.message });
         }
 
-        // Enviar a la empresa
+        // Enviar a la empresa (con adjuntos opcionales)
         try {
-            resultados.empresa = await enviarEmailEmpresa(pedido);
+            resultados.empresa = await enviarEmailEmpresa(pedido, opciones);
         } catch (error) {
             resultados.errores.push({ tipo: 'empresa', mensaje: error.message });
         }
