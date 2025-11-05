@@ -1,7 +1,7 @@
-# 🎨 LitoArte - Ruben Litofanías
+# 🎨 Litum 3D
 
 ## 📖 Descripción
-Sitio web profesional completo para **Ruben Litofanías**, especialista en la creación de litofanías personalizadas ubicado en Lüscerz, Suiza. Sistema completo de e-commerce con frontend y backend integrados.
+Sitio web profesional completo para **Litum 3D**, especialista en la creación de litofanías personalizadas ubicado en Lüscherz, Suiza. Sistema completo de e-commerce con frontend y backend integrados.
 
 ## ✨ Características Principales
 
