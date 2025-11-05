@@ -141,7 +141,7 @@ const TEXTOS_RESENAS = {
 };
 
 let todasLasResenas = [];
-let resenasMostradas = 12;
+let resenasMostradas = 3; // Cambiado de 12 a 3
 let idiomaFiltro = 'todos';
 
 // Generar nombre completo
@@ -296,7 +296,7 @@ function initResenas() {
             this.classList.add('active');
             
             idiomaFiltro = this.dataset.idioma;
-            resenasMostradas = 12;
+            resenasMostradas = 3; // Reiniciar a 3 al filtrar
             mostrarResenas();
         });
     });
@@ -305,7 +305,7 @@ function initResenas() {
     const btnCargarMas = document.getElementById('cargar-mas-resenas');
     if (btnCargarMas) {
         btnCargarMas.addEventListener('click', function() {
-            resenasMostradas += 12;
+            resenasMostradas += 6; // Cargar 6 más cada vez
             mostrarResenas();
         });
     }
